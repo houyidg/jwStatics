@@ -1,0 +1,114 @@
+.wrap_login{
+    width: 100%;
+    height: 100%;
+    background:#ffffff ;
+}
+
+.wrap1{
+    width: 350px;
+    min-height: 280px;
+    background: grey;
+    margin: 0px auto;
+    border: 8px solid #0076CE;
+
+   
+}
+.name{
+    width: 100%;
+    text-align: center;
+    font-size: 35px;
+    color: #0f4771;
+    margin: 150px auto 10px;
+    font-weight: 800;
+
+}
+.wrap1 .title{
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    color: #ffffff;
+    background: #0076CE;
+    text-align: center;
+}
+.wrap1 ul{
+    width: 100%;
+    height: 100%;
+    /*padding-top:50px ;*/
+    background: #0076CE;
+    padding-bottom: 8px ;
+
+}
+.wrap1 ul li{
+
+    min-height: 30px;
+    line-height: 30px;
+    padding: 8px 15px ;
+    background: #ffffff;
+}
+.wrap1 ul li .left_txt{
+    float:left;
+    width: 70px;
+    font-size: 16px;
+    text-align: justify;
+}
+
+.wrap1 ul li .input_label{
+    float: left;
+    width: 230px;
+    border: 1px solid #999;
+    height: 30px;
+    line-height: 30px;
+   
+}
+.wrap1 ul li .error_lip{
+    width: 100%;
+    color: red;
+}
+
+.sure_button{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+  text-align: center;
+    background: #0076CE;
+    color: #ffffff;
+    margin-left:50px;
+}
+.sure_button:hover{
+    background: #0076BD;
+}
+
+.reset_button{
+    width: 80px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background: gainsboro;
+    color: #4c4c4c;
+    margin-left:50px;
+
+}
+.border_radius{
+    border-radius: 5px;
+    -o-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+}
+.register{
+    float: left;
+}
+.register a{
+    text-decoration: underline;
+    color: #0076CE;
+}
+.forgetPW{
+    float: right;
+    text-decoration: underline;
+    color: dimgrey;
+}
+.txtVerification{
+    width: 93px;
+    height: 30px;
+    border: 1px solid #999;
+}

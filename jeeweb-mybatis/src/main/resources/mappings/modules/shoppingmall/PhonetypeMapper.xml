@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jeeweb.modules.shoppingmall.mapper.PhonetypeMapper" >
+
+  <sql id="Base_Column_List" >
+    t.id,
+    t.update_by,
+    t.update_date,
+    t.del_flag,
+    t.remarks,
+    t.name,
+    t.price,
+    t.price_unit
+  </sql>
+  
+</mapper>

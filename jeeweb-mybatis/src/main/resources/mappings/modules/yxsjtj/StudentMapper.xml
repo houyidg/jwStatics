@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jeeweb.modules.yxsjtj.mapper.StudentMapper">
+	<sql id="Base_Column_List">
+		t.ksh,
+		t.bysj,
+		t.yxdm,
+		t.sfzh,
+		t.xm,
+		t.xbdm,
+		t.mzdm,
+		t.zzmmdm,
+		t.xldm,
+		t.zydm,
+		t.zy,
+		t.zyfx,
+		t.pyfsdm,
+		t.syszddm,
+		t.dxhwpdw,
+		t.xz,
+		t.rxsj,
+		t.knslbdm,
+		t.sfslbdm,
+		t.byqxdm,
+		t.dwzzjgdm,
+		t.dwmc,
+		t.dwxzdm,
+		t.dwhydm,
+		t.dwszddm,
+		t.gzzwlbdm,
+		t.bdzqflbdm,
+		t.bdzqwdwmc,
+		t.qwdwszddm,
+		t.bdzbh,
+		t.bdqssj,
+		t.id
+	</sql>
+
+	<!--universityid featureid belongto startDate endDate typeid areaid byqxdms 
+		byqxdm -->
+	<select id="getStatics" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select t.byqxdm,count(t.id) AS count from student t WHERE (1=1
+
+		<if test="startDate !=null and endDate !=null">
+			AND t.bysj <![CDATA[>=]]>
+			#{startDate} AND t.bysj <![CDATA[<=]]>
+			#{endDate}
+		</if>
+
+		<if test="yxdms!=null">
+			AND t.yxdm IN
+			<foreach collection="yxdms" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="featureid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.featureid
+			IN
+			<foreach collection="featureid" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="belongto!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.belongto
+			IN
+			<foreach collection="belongto" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="typeid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.typeid IN
+			<foreach collection="typeid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="areaid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.areaid IN
+			<foreach collection="areaid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="byqxdms!=null">
+			AND t.byqxdm IN
+			<foreach collection="byqxdms" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+		</if>
+		)
+		GROUP BY t.byqxdm
+	</select>
+<!-- getJylStatics -->
+	<select id="getJYLStatics" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select t.yxdm,t.byqxdm,count(t.id) AS count from student t WHERE (1=1
+
+		<if test="startDate !=null and endDate !=null">
+			AND t.bysj <![CDATA[>=]]>
+			#{startDate} AND t.bysj <![CDATA[<=]]>
+			#{endDate}
+		</if>
+
+		<if test="yxdms!=null">
+			AND t.yxdm IN
+			<foreach collection="yxdms" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="featureid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.featureid
+			IN
+			<foreach collection="featureid" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="belongto!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.belongto
+			IN
+			<foreach collection="belongto" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="typeid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.typeid IN
+			<foreach collection="typeid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="areaid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.areaid IN
+			<foreach collection="areaid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="byqxdms!=null">
+			AND t.byqxdm IN
+			<foreach collection="byqxdms" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+		</if>
+		)
+		GROUP BY t.byqxdm,t.yxdm
+	</select>
+	
+<!-- getJYQSStatics -->
+	<select id="getJYQSStatics" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		select t.yxdm,t.byqxdm,count(t.id) AS count,t.bysj from student t WHERE (1=1
+
+		<if test="startDate !=null and endDate !=null">
+			AND t.bysj <![CDATA[>=]]>
+			#{startDate} AND t.bysj <![CDATA[<=]]>
+			#{endDate}
+		</if>
+
+		<if test="yxdms!=null">
+			AND t.yxdm IN
+			<foreach collection="yxdms" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="featureid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.featureid
+			IN
+			<foreach collection="featureid" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="belongto!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.belongto
+			IN
+			<foreach collection="belongto" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="typeid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.typeid IN
+			<foreach collection="typeid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="areaid!=null">
+			AND t.yxdm IN (SELECT t2.number FROM university t2 WHERE t2.areaid IN
+			<foreach collection="areaid" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test="byqxdms!=null">
+			AND t.byqxdm IN
+			<foreach collection="byqxdms" item="item" open="(" separator=","
+				close=")">
+				#{item}
+			</foreach>
+		</if>
+
+		<if test="is985!=null and is211==null">
+			AND t.yxdm IN
+			(SELECT number FROM university WHERE
+			is985=#{is985})
+		</if>
+		<if test="is211!=null and is985==null">
+			AND t.yxdm IN
+			(SELECT number FROM university WHERE
+			is211=#{is211})
+		</if>
+
+		<if test="is211!=null and is985!=null">
+			AND t.yxdm IN
+			(SELECT number FROM university WHERE
+			is211=#{is211})
+		</if>
+		)
+		GROUP BY t.byqxdm,t.bysj,t.yxdm
+	</select>
+
+	
+</mapper>

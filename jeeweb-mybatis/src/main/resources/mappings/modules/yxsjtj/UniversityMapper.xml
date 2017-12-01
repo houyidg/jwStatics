@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.jeeweb.modules.yxsjtj.mapper.UniversityMapper" >
+
+  <sql id="Base_Column_List" >
+    t.number,
+    t.name,
+    t.areaid,
+    t.featureid,
+    t.belongto,
+    t.typeid,
+    t.is211,
+    t.is985,
+    t.isindependent,
+    t.isnewbk,
+    t.issfgz,
+    t.iskyjg,
+    t.ismbyx,
+    t.ispyzk,
+    t.ispybk,
+    t.ispyss,
+    t.ispybs,
+    t.id,
+    t.provinceid
+  </sql>
+  
+</mapper>
