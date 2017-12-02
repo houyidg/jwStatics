@@ -58,7 +58,7 @@
 		<!-- 邮件发送工具 -->
 		<email.version>1.4</email.version>
 		<!-- Excel导入导出 -->
-		<poi.version>3.12</poi.version>
+		<poi.version>3.8</poi.version>
 		<!-- velocity工具用于代码生成 -->
 		<velocity.version>1.7</velocity.version>
 		<!-- JDK版本 -->

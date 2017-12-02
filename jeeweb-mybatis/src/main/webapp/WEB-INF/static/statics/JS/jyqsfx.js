@@ -15,20 +15,21 @@ $(function() {
 				var CType = $("#CType .fixedId").val();
 				var CName = $("#CName .fixedId").val();
 				var CQx = $("#CQx .fixedId").val();
+				var CZy = $("#CZy .fixedId").val();
 				// alert(CArea + "," + CFeature + "," + CBelongto + "," + CType+
 				// "," + CName+','+start_time);
 				var newUrl = realBaseUrl + "/ajaxChartList";
 				var arg = "actiontype="+actiontype+"&areaid=" + CArea + "&featureid="
 						+ CFeature + "&belongto=" + CBelongto + "&typeid="
-						+ CType+"&yxdms="+CName+"&byqxdms="+CQx;
+						+ CType+"&yxdms="+CName+"&byqxdms="+CQx+"&zy="+CZy;
 				newUrl += "?" + arg;
-
+				console.log('newUrl',newUrl);
 				$.ajax({
 					url : newUrl,
 					dataType : 'json',
 					type : 'GET',
 					success : function(data) {
-						console.log('ajaxChartList:', data);
+						console.log('ajax:', data);
 						generateChart(data);
 					}
 				});
@@ -77,7 +78,6 @@ function initChose(idname, url, param) {
 		dataType : 'json',
 		type : 'GET',
 		success : function(data) {
-			console.log('initChose:', data);
 			generateChosen(idname,data);
 		}
 	});
@@ -92,25 +92,74 @@ function generateChosen(sid,data){
 				dataListHeight : 500, // 下拉框的高度
 				placeholderTxt : '全部', // 初始化提示文字
 				searchOpt : true,
-				multi : true,
+				multi :sid=="CZy"?false:true,
 				maxSize : 5,
 				joinChar : ',',
 				clearOpt:true,
-				removeCallback : (id, name, _self)=>{
+				removeCallback :function (id, name, _self){
 					parseParamsInitChose(sid,id, name, _self);
 				},
-				selectedCallback :  (id, name, _self)=>{
+				selectedCallback :function(id, name, _self){
 					parseParamsInitChose(sid,id, name, _self);
 				}
 			});
 }
 
+/**
+ *    legend: {
+            data:['最高气温','最低气温']
+        },
+        xAxis : [
+            {
+                type : 'category',
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} °C'
+                }
+            }
+        ],
+ *    series : [
+            {
+                name:'最高气温',
+                type:'line',
+                data:[11, 11, 15, 13, 12, 13, 10]
+            },
+            {
+                name:'最低气温',
+                type:'line',
+                data:[1, -2, 2, 5, 3, 2, 0],
+            }
+        ]
+ * @param data
+ * @returns
+ */
 function generateChart (data) {
-	 var xData=[];var yData=[];
-	 for (var index in data) {
-		 xData.push(data[index].name);
-		 yData.push(data[index].value);
+	 var xData = new Array();  ;//bysj
+	 var legend=[];//yxmc
+	 var series=[];
+	 var bysjIndx=0;
+	 console.log('generateChart data:',data.length);
+	 for (var index=0,len = data.length;index<len;index++) {
+		var element = data[index];
+		var innerData = element.entrys;
+		legend[index] = element.yxmc;
+		series[index] = {name:element.yxmc, type:'line',data:[],itemStyle:{ normal: {label : {show: true}}}};
+		for(var dex=0,ilen = innerData.length;dex<ilen;dex++){
+			var iElement = innerData[dex];
+			if(!xData.hasOwnProperty(iElement.name)){
+				xData[bysjIndx++] = iElement.name;
+			}
+			series[index].data[dex] = iElement.value;
+		};
 	 }
+	 xData = xData.sort();
+	 
+	 console.log('generateChart xData:',xData,'legend:',legend,"series:",series);
 	 var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
 	    var lineoption = {
 	        title : {
@@ -120,7 +169,7 @@ function generateChart (data) {
 	            trigger: 'axis'
 	        },
 	        legend: {
-	            data:['就业趋势分析']
+	            data:legend
 	        },
 	        xAxis : [
 	            {
@@ -136,15 +185,9 @@ function generateChart (data) {
 	                }
 	            }
 	        ],
-	        series : [
-	            {
-	                name:'就业趋势分析',
-	                type:'line',
-	                data:yData
-	            }
-	        ]
+	        series :series
 	    };
-	    lineChart.setOption(lineoption);
+	    lineChart.setOption(lineoption,true);
 	    $(window).resize(lineChart.resize);
 }
 

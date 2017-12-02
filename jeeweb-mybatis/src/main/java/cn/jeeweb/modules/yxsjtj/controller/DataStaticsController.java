@@ -56,8 +56,10 @@ import cn.jeeweb.modules.sys.utils.DictUtils;
 import cn.jeeweb.modules.yxsjtj.entity.ChartBaseEntry;
 import cn.jeeweb.modules.yxsjtj.entity.ChartModel;
 import cn.jeeweb.modules.yxsjtj.entity.ColumnEntry;
+import cn.jeeweb.modules.yxsjtj.entity.JylColumn;
 import cn.jeeweb.modules.yxsjtj.entity.JylEntry;
 import cn.jeeweb.modules.yxsjtj.entity.JyqsEntry;
+import cn.jeeweb.modules.yxsjtj.entity.JyqsLine;
 import cn.jeeweb.modules.yxsjtj.entity.LineEntry;
 import cn.jeeweb.modules.yxsjtj.entity.PropertyEntry;
 import cn.jeeweb.modules.yxsjtj.entity.PieEntry;
@@ -155,8 +157,9 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 		String parameterValue = request.getParameter(parameterKey);
 		if (parameterValue != null && !parameterValue.equals(AllCountId) && !parameterValue.trim().equals("")) {
 			String[] arr = parameterValue.split(arrConStr);
-			for (String value : arr) {
-				entityWrapper.and(parameterKey + " = {0}", parameterValue);
+			if(arr.length>0) {
+				entityWrapper.and();
+				entityWrapper.in(parameterKey, arr);
 			}
 		}
 	}
@@ -166,7 +169,7 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 	private void ajaxChartList(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String actiontype = request.getParameter("actiontype");
 		Map<String, Object> paramtersMap = getRequestParamterMap(request.getParameterMap());
-		String content="";
+		String content = "";
 
 		if (ACTION_TYPE_BYQXFX.equals(actiontype)) {
 			List<ChartBaseEntry> list = new ArrayList<>();
@@ -184,111 +187,142 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 					}
 				}
 			}
-			 content = JSON.toJSONString(list);
+			content = JSON.toJSONString(list);
 		} else if (ACTION_TYPE_JYLFX.equals(actiontype)) {
-			List<ColumnEntry> list = new ArrayList<>();
-			// 需要对比的获取院校
-			String[] yxdms = (String[]) paramtersMap.get("yxdms");
 			List<Map<String, Object>> dataList = studentService.getJYLStatics(paramtersMap);
 			System.out.println("ajaxChartList ACTION_TYPE_JYLFX:" + dataList);
-			Map<String, JylEntry> resultMap = new HashMap<>();
 			String type = "全部";
+			List<JylColumn> jylColumns = new ArrayList<>();
+
+			JylColumn jylColumnAll = null, jylColumn = null;
+
+			// 需要对比的获取院校
+			String[] yxdms = (String[]) paramtersMap.get("yxdms");
 			if (yxdms == null) {
-				resultMap.put(type, new JylEntry());
-			} else {
-				for (String yxdm : yxdms) {
-					resultMap.put(yxdm, new JylEntry());
+				jylColumnAll = new JylColumn(type);
+				jylColumns.add(jylColumnAll);
+			}else {
+				for(String yxdm :yxdms) {
+					JylColumn column = new JylColumn(yxdm);
+					generateJylColumn(jylColumns, column);
 				}
 			}
-
-			JylEntry jylEntry = null;
+			/** 院校代码 院校名称 所在地 院校性质 隶属单位 办学类型 211 985 毕业时间 毕业人数
+			 */
 			for (Map<String, Object> map : dataList) {
-				long tempCount = Long.MAX_VALUE;
-				String tempDm = null;
-				if (yxdms == null) {
-					jylEntry = resultMap.get(type);
-				} else {
-					jylEntry = resultMap.get(map.get("yxdm"));
+				JylColumn column = new JylColumn(map.get("yxdm").toString());
+				int indexOf = jylColumns.indexOf(column);
+				if(indexOf==-1) {
+					generateJylColumn(jylColumns, column);
+					jylColumn = column;
+				}else {
+					jylColumn = jylColumns.get(indexOf);
 				}
-				//
-				tempCount = (Long) map.get("count");
-				tempDm = (String) map.get("byqxdm");
 
-				// count
-				if (tempCount != Long.MAX_VALUE)
-					jylEntry.count += tempCount;
-				if ("70".equals(tempDm)) {
-					jylEntry.djyrs += tempCount;
-				} else if ("71".equals(tempDm)) {
-					jylEntry.bjynsxrs += tempCount;
-				} else if ("72".equals(tempDm)) {
-					jylEntry.qtzbjyrs += tempCount;
+				long tempCount = (Long) map.get("count");
+				String tempDm = (String) map.get("byqxdm");
+
+				if (jylColumnAll != null) {
+					setJylColumn(jylColumnAll, tempCount, tempDm);
 				}
-				jylEntry.jyrs = jylEntry.count - jylEntry.djyrs - jylEntry.bjynsxrs - jylEntry.qtzbjyrs;
-			}
-			for (String key : resultMap.keySet()) {
-				jylEntry = resultMap.get(key);
-				if (!type.equals(key)) {
-					// 从院校db根据院校代码读取院校名称
-					EntityWrapper<University> wrapper = new EntityWrapper<>(University.class);
-					wrapper.setSqlSelect("name");
-					wrapper.eq("number", key);
-					key = (String) universityService.selectObj(wrapper);
+
+				if (jylColumn != null) {
+					setJylColumn(jylColumn, tempCount, tempDm);
 				}
-				System.out.println("ajaxChartList key:" + key);
-				// 就业人数
-				list.add(new ColumnEntry(jylEntry.jyrs, TYPE_JR, key));
-				// 待就业人数
-				list.add(new ColumnEntry(jylEntry.djyrs, TYPE_DJR, key));
-				// 暂不就业
-				list.add(new ColumnEntry(jylEntry.bjynsxrs + jylEntry.qtzbjyrs, TYPE_ZBJR, key));
 			}
-			 content = JSON.toJSONString(list);
+			content = JSON.toJSONString(jylColumns);
 		} else if (ACTION_TYPE_JYQSFX.equals(actiontype)) {
-			List<LineEntry> list = new ArrayList<LineEntry>();
 			List<Map<String, Object>> dataList = studentService.getJYQSStatics(paramtersMap);
 			System.out.println("ajaxChartList dataList" + dataList);
 			String[] yxdms = (String[]) paramtersMap.get("yxdms");
-			Map<String, JyqsEntry> resultMap = new HashMap<>();
 			String type = "全部";
 			
-			JyqsEntry jylEntry = null;
-			String name = null;
+			List<JyqsLine> jyqsLines = new ArrayList<JyqsLine>();
+			JyqsLine jyqsLineAll = null,jyqsLine=null;
+			if(yxdms==null) {
+				jyqsLineAll = new JyqsLine(type);
+				jyqsLineAll.yxmc = type;
+				jyqsLines.add(jyqsLineAll);
+			}else {
+				for(String yxdm:yxdms) {
+					JyqsLine line = new JyqsLine(yxdm);
+					generateJyqsLine(jyqsLines,line);
+				}
+			}
+			
 			for (Map<String, Object> map : dataList) {
-				if (yxdms == null) {
-					name = type+"-"+(((String) map.get("bysj")).substring(0, 4));
-				} else {
-					name = map.get("yxdm")+"-"+(((String) map.get("bysj")).substring(0, 4));
-				}
-				
-				if(resultMap.containsKey(name)) {
-					jylEntry = resultMap.get(name);
+				String yxdm = map.get("yxdm").toString();
+				int indexOf = jyqsLines.indexOf(new JyqsLine(yxdm));
+				if(indexOf==-1) {
+					jyqsLine = null;
 				}else {
-					jylEntry = new JyqsEntry();
-					resultMap.put(name, jylEntry);
+					jyqsLine = jyqsLines.get(indexOf);
 				}
 				
-				jylEntry.value += ((long) map.get("count"));
-				jylEntry.name = name.split("-")[1];
-			}
-
-			for (String key : resultMap.keySet()) {
-				jylEntry = resultMap.get(key);
-				key = key.split("-")[0];//获取院校代码
-				if (!type.equals(key)) {
-					// 从院校db根据院校代码读取院校名称
-					EntityWrapper<University> wrapper = new EntityWrapper<>(University.class);
-					wrapper.setSqlSelect("name");
-					wrapper.eq("number", key);
-					key = (String) universityService.selectObj(wrapper);
+				String bysj = (((String) map.get("bysj")).substring(0, 4));
+				long count = (long) map.get("count");
+				
+				if(jyqsLineAll!=null) {
+					setJyqsLine(jyqsLineAll, bysj, count);
 				}
-				// 就业人数
-				list.add(new LineEntry(jylEntry.value, jylEntry.name, key));
+				
+				if(jyqsLine!=null) {
+					setJyqsLine(jyqsLine, bysj, count);
+				}
 			}
-			 content = JSON.toJSONString(list);
+			System.out.println("jyqsLines"+jyqsLines.size()+",jyqsLineAll:"+jyqsLineAll);
+			content = JSON.toJSONString(jyqsLines);
 		}
 		System.out.println("ajaxChartList actiontype:" + actiontype + ", content" + content);
 		StringUtils.printJson(response, content);
+	}
+
+	private List<JyqsLine.Entry> setJyqsLine(JyqsLine jyqsLineAll, String bysj, long count) {
+		List<JyqsLine.Entry> valueList = jyqsLineAll.entrys;
+		cn.jeeweb.modules.yxsjtj.entity.JyqsLine.Entry entry =  jyqsLineAll.new Entry(bysj,0);
+		boolean contains = valueList.contains(entry);
+		if(contains) {
+			entry = valueList.get(valueList.indexOf(entry));
+		}else {
+			valueList.add(entry);
+		}
+		entry.value+=count;
+		return valueList;
+	}
+
+	private void generateJyqsLine(List<JyqsLine> jyqsLines, JyqsLine jyqsLine) {
+			// 从院校db根据院校代码读取院校名称
+			EntityWrapper<University> wrapper = new EntityWrapper<>(University.class);
+			wrapper.setSqlSelect("name");
+			wrapper.eq("number", jyqsLine.yxdm);
+			jyqsLine.yxmc = (String) universityService.selectObj(wrapper);
+			jyqsLines.add(jyqsLine);
+	}
+
+	private void generateJylColumn(List<JylColumn> jylColumns, JylColumn column) {
+		EntityWrapper<University> wrapper = new EntityWrapper<>(University.class);
+		wrapper.eq("number", column.yxdm);
+		University university = universityService.selectOne(wrapper);
+		column.yxmc = university.getName();
+		column.yxszd = DictUtils.getDictLabel(university.getAreaid(), "yxszd", university.getAreaid());
+		column.yxxz = DictUtils.getDictLabel(university.getFeatureid(), "yxxz", university.getFeatureid());
+		column.yxlsdw =  DictUtils.getDictLabel(university.getBelongto(), "lsdw", university.getBelongto());
+		column.yxbxlx = DictUtils.getDictLabel(university.getTypeid(), "bxlx", university.getTypeid()); 
+		column.is211 = university.getIs211();
+		column.is985 = university.getIs985();
+		jylColumns.add(column);
+	}
+
+	private void setJylColumn(JylColumn jylColumnAll, long tempCount, String tempDm) {
+		jylColumnAll.count += tempCount;
+		if ("70".equals(tempDm)) {
+			jylColumnAll.djyrs += tempCount;
+		} else if ("71".equals(tempDm)) {
+			jylColumnAll.bjynsxrs += tempCount;
+		} else if ("72".equals(tempDm)) {
+			jylColumnAll.qtzbjyrs += tempCount;
+		}
+		jylColumnAll.jyrs = jylColumnAll.count - jylColumnAll.djyrs - jylColumnAll.bjynsxrs - jylColumnAll.qtzbjyrs;
 	}
 
 	@RequestMapping(value = "jyqsfxList", method = RequestMethod.GET)
@@ -327,7 +361,10 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 			if (!value[0].trim().equals("") && !value[0].equals(AllCountId)) {
 				if ("startDate".equals(key) || "endDate".equals(key)) {
 					map.put(key, value[0]);
-				} else {
+				} else if("zy".equals(key)){
+					map.put(key, value[0]);
+					System.out.println("key:"+key+",value[0]:"+value[0]);
+				}else {
 					String[] arr = value[0].split(arrConStr);
 					map.put(key, arr);
 				}

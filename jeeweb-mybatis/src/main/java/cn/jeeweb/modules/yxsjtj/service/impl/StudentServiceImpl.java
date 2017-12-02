@@ -32,33 +32,44 @@ import cn.jeeweb.modules.yxsjtj.utils.ReadExcelUtils;
 public class StudentServiceImpl extends CommonServiceImpl<StudentMapper, Student> implements IStudentService {
 	@Override
 	public boolean resolverStudents(HttpServletRequest request, MultipartFile file) throws Exception {
-		InputStream inputStream = file.getInputStream();
-		String filename = file.getOriginalFilename();
-		String fileext = StringUtils.getExtensionName(filename);
-		ArrayList<Student> arrayList = new ReadExcelUtils(inputStream, fileext, Student.class).readExcelContent();
-		boolean insertBatch = insertBatch(arrayList);
-		System.out.println("insertBatch:" + insertBatch);
-		return true;
+		boolean insertBatch = false;
+		InputStream inputStream = null;
+		try {
+			inputStream = file.getInputStream();
+			String filename = file.getOriginalFilename();
+			String fileext = StringUtils.getExtensionName(filename);
+			ReadExcelUtils readExcelUtils = new ReadExcelUtils(inputStream, fileext, Student.class);
+			if(readExcelUtils.wb!=null) {
+				ArrayList<Student> arrayList = readExcelUtils.readExcelContent();
+				insertBatch = insertBatch(arrayList);
+			}
+			System.out.println("insertBatch:" + insertBatch);
+		} catch (Exception e) {
+			if (inputStream != null)
+				inputStream.close();
+			e.printStackTrace();
+		}
+		return insertBatch;
 	}
 
 	@Override
 	public List<Map<String, Object>> getStatics(Map<String, Object> data) {
 		List<Map<String, Object>> list = baseMapper.getStatics(data);
-		System.out.println("getStatics:---"+list);
+		System.out.println("getStatics:---" + list);
 		return list;
 	}
 
 	@Override
 	public List<Map<String, Object>> getJYQSStatics(Map<String, Object> data) {
 		List<Map<String, Object>> list = baseMapper.getJYQSStatics(data);
-		System.out.println("getJYQSStatics:---"+list);
+		System.out.println("getJYQSStatics:---" + list);
 		return list;
 	}
 
 	@Override
 	public List<Map<String, Object>> getJYLStatics(Map<String, Object> data) {
 		List<Map<String, Object>> list = baseMapper.getJYLStatics(data);
-		System.out.println("getZys:---"+list);
+		System.out.println("getZys:---" + list);
 		return list;
 	}
 }

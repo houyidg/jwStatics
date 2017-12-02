@@ -26,12 +26,13 @@
 			searchAjaxURL: '',				//后台搜索url
 			ajaxParam: {},					//后台搜索的参数
 
-			clearOpt: false,				//是否可以删除选择项	
+			clearOpt: false,				//是否可以删除选择项
+            clearoptSingle:true,
 
 			multi: false,		//是否多选
 			multiInline: false,	//选择的多选内容是连在一起的
 			maxSize: 5,			//选择的最大条数
-			maxSizeTip: '',		//超出选择后的提示
+			maxSizeTip: '',		//超出选择后的提示f
 			joinChar: ','		//选择连接符
 		};
 		
@@ -134,8 +135,9 @@
 				
 				if(opt.multi && !opt.multiInline){
 					for(var i = 0, len = selectedId.length; i < len; i++){
-						_self.find('.dataSelectedCon').append('<span class="item" thisid="'+selectedId[i]+'" thisval="'+opt.initSelectedValue[i]+'"><a href="javascript:;" class="itemText">'+opt.initSelectedValue[i]+'</a><a href="javascript:;" class="delItem"></a></span>');
+						_self.find('.dataSelectedCon').append('<span class="item" thisid="'+selectedId[i]+'" thisval="'+opt.initSelectedValue[i]+'"><a href="javascript:;" class="itemText">'+opt.initSelectedValue[i]+'</a></span>');
 					}
+                    Chosen._bind();
 				}else{
 					_self.find('.fixedText').html(opt.initSelectedValue.join(opt.joinChar));
 				}
@@ -242,6 +244,7 @@
 							$(this).addClass('active');
 						}
 					});
+                    Chosen._bind();
 				})
 			},
 
@@ -344,7 +347,7 @@
 				});
 
 				//选择框点击操作
-				_self.find('.dataSelected').click( function(){
+				_self.find('.dataSelected').click(function(){
 					if(_self.find('.chosenCon').is(':hidden')){
 						if($(this).outerWidth() > _self.find('.chosenCon').outerWidth()){
 							$(this).removeClass('dataSelectedActiveFFF');
@@ -390,7 +393,7 @@
 				});
 
 				//列表选择内容点击
-				_self.find('.dataList li').click( function(){
+				_self.find('.dataList li').click(function(){
 					var thisId = $(this).attr('thisid');
 					var thisVal = $(this).attr('thisval');
 
@@ -443,7 +446,7 @@
 							if(opt.multiInline){
 								_self.find('.fixedText').html(_self.find('.fixedVal').val()).attr('title', _self.find('.fixedVal').val());
 							}else{
-								_self.find('.dataSelectedCon').append('<span class="item" thisid="'+thisId+'" thisval="'+thisVal+'"><a href="javascript:;" class="itemText">'+thisVal+'</a><a href="javascript:;" class="delItem"></a></span>');
+								_self.find('.dataSelectedCon').append('<span class="item" thisid="'+thisId+'" thisval="'+thisVal+'"><a href="javascript:;" class="itemText">'+thisVal+'</a></span>');
 							}
 							_self.find('.fixedTextInit').hide();
 							opt.clearOpt && _self.find('.clearSelected').show();
@@ -483,7 +486,7 @@
 				});
 
 				//选择时上下键操作
-				_self.find('.keywords').keydown(function(e){
+				_self.find('.keywords').keydown( function(e){
 					 switch(e.keyCode){
 		                case 38: //up
 		                    Chosen._selectItemMove('up');
@@ -512,7 +515,7 @@
 									if(opt.multiInline){
 										_self.find('.fixedText').html(_self.find('.fixedVal').val()).attr('title', _self.find('.fixedVal').val());
 									}else{
-										_self.find('.dataSelectedCon').append('<span class="item" thisid="'+thisId+'" thisval="'+thisVal+'"><a href="javascript:;" class="itemText">'+thisVal+'</a><a href="javascript:;" class="delItem"></a></span>');
+										_self.find('.dataSelectedCon').append('<span class="item" thisid="'+thisId+'" thisval="'+thisVal+'"><a href="javascript:;" class="itemText">'+thisVal+'</a></span>');
 									}
 
 									_self.find('.fixedTextInit').hide();
@@ -571,52 +574,55 @@
 					});
 				};
 
-				//清除选择内容
-				_self.find('.delItem').click( function(e){
-					var thisId = $(this).parent().attr('thisid');
-					var thisVal = $(this).parent().attr('thisval');
-					$(this).parent().remove();
+//				清除选择内容
+                if(opt.clearoptSingle){
+                    _self.find('.clearSelected .delItem').click(function(e){
+                        var thisId = $(this).parent().attr('thisid');
+                        var thisVal = $(this).parent().attr('thisval');
+                        $(this).parent().remove();
 
-					var _thisVal = _self.find('.fixedVal').val().split(opt.joinChar);
-					var _thisId = _self.find('.fixedId').val().split(opt.joinChar);
+                        var _thisVal = _self.find('.fixedVal').val().split(opt.joinChar);
+                        var _thisId = _self.find('.fixedId').val().split(opt.joinChar);
 
-					_thisVal.remove(thisVal);
-					_thisId.remove(thisId);
+                        _thisVal.remove(thisVal);
+                        _thisId.remove(thisId);
 
-					_self.find('.fixedVal').val(_thisVal.join(opt.joinChar));
-					_self.find('.fixedId').val(_thisId.join(opt.joinChar));
+                        _self.find('.fixedVal').val(_thisVal.join(opt.joinChar));
+                        _self.find('.fixedId').val(_thisId.join(opt.joinChar));
 
-					_self.find('.dataList li').each(function(){
-						if($(this).attr('thisid') == thisId){
-							$(this).removeClass('active');
-						}
-					});
-					var _top = _self.find('.dataSelectedCon').outerHeight();
-						_top = _top < 24 ? 24 : _top;
-						_self.find('.chosenCon').css('top', _top + 1);
+                        _self.find('.dataList li').each(function(){
+                            if($(this).attr('thisid') == thisId){
+                                $(this).removeClass('active');
+                            }
+                        });
+                        var _top = _self.find('.dataSelectedCon').outerHeight();
+                        _top = _top < 24 ? 24 : _top;
+                        _self.find('.chosenCon').css('top', _top + 1);
 
-					if(!_self.find('.chosenCon').is(':hidden')){
-						if(typeof opt.chosenWidth != 'number'){
-							if(_self.find('.dataSelected').outerWidth() > _self.find('.chosenCon').outerWidth()){
-								_self.find('.dataSelected').removeClass('dataSelectedActiveFFF');
-								_self.find('.chosenCon').addClass('chosenConFFF');
-							}else{
-								_self.find('.dataSelected').addClass('dataSelectedActiveFFF');
-								_self.find('.chosenCon').removeClass('chosenConFFF');
-							}
-						}
-					}
-					if(!_self.find('.fixedId').val().split(opt.joinChar).length){
-						opt.clearOpt && _self.find('.clearSelected').hide();
-						_self.find('.fixedTextInit').show();
-					}
-					if(_self.find('.dataSelectedCon').html() == ''){
-						_self.find('.fixedTextInit').show();
-					}
-					
-					opt.removeCallback(thisId, thisVal, _self);
-					e.stopPropagation();
-				});
+                        if(!_self.find('.chosenCon').is(':hidden')){
+                            if(typeof opt.chosenWidth != 'number'){
+                                if(_self.find('.dataSelected').outerWidth() > _self.find('.chosenCon').outerWidth()){
+                                    _self.find('.dataSelected').removeClass('dataSelectedActiveFFF');
+                                    _self.find('.chosenCon').addClass('chosenConFFF');
+                                }else{
+                                    _self.find('.dataSelected').addClass('dataSelectedActiveFFF');
+                                    _self.find('.chosenCon').removeClass('chosenConFFF');
+                                }
+                            }
+                        }
+                        if(!_self.find('.fixedId').val().split(opt.joinChar).length){
+                            opt.clearOpt && _self.find('.clearSelected').hide();
+                            _self.find('.fixedTextInit').show();
+                        }
+                        if(_self.find('.dataSelectedCon').html() == ''){
+                            _self.find('.fixedTextInit').show();
+                        }
+
+                        opt.removeCallback(thisId, thisVal, _self);
+                        e.stopPropagation();
+                    });
+                }
+
 
 				//绑定点击隐藏
 				$(document).unbind('mousedown.Chosen');
@@ -643,7 +649,6 @@
 		var _self = $(this);
 		var _i = 0;
 		_self.html('').addClass('chosen');
-
 		Chosen._init();
 		opt.initCallback(_self, opt.data);
 	}

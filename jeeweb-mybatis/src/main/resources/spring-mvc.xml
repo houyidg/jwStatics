@@ -11,7 +11,7 @@
 	  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
       http://www.springframework.org/schema/mvc  
       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
-
+	
 	<!-- 加载配置属性文件 -->
 	<context:property-placeholder
 		ignore-unresolvable="true"
@@ -42,7 +42,6 @@
 	<!-- 静态资源访问，方案2 -->
 	<!-- <mvc:default-servlet-handler/> -->
 
-
 	<bean class="cn.jeeweb.core.utils.SpringContextHolder" />
 	<!-- 开启注解方案1 -->
 	<!-- 注解方法处理 -->
@@ -53,12 +52,16 @@
 
 	<!-- 开启注解方案2 -->
 	<mvc:annotation-driven>
+		<!-- 可不设置，使用异步线程默认的超时时间 -->
+		<mvc:async-support default-timeout="300000" />
 		<mvc:argument-resolvers>
 			<bean class="cn.jeeweb.core.query.resolver.QueryMethodArgumentResolver" />
 			<bean class="cn.jeeweb.core.query.resolver.PageableMethodArgumentResolver" />
 			<bean class="cn.jeeweb.core.query.resolver.FormModelMethodArgumentResolver" />
-			<bean class="cn.jeeweb.core.query.resolver.RequestJsonParamMethodArgumentResolver" />
-			<bean class="cn.jeeweb.core.query.resolver.PropertyPreFilterMethodArgumentResolver" />
+			<bean
+				class="cn.jeeweb.core.query.resolver.RequestJsonParamMethodArgumentResolver" />
+			<bean
+				class="cn.jeeweb.core.query.resolver.PropertyPreFilterMethodArgumentResolver" />
 		</mvc:argument-resolvers>
 
 
@@ -118,9 +121,11 @@
 	</mvc:annotation-driven>
 
 	<!-- 类型转换及数据格式化 -->
-	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
 	<!--设置查询字符串转换器的conversion service -->
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
 		<property name="staticMethod"
 			value="cn.jeeweb.core.query.utils.QueryableConvertUtils.setConversionService" />
 		<property name="arguments" ref="conversionService" />
@@ -139,16 +144,16 @@
 
 	<!-- 拦截器 -->
 	<mvc:interceptors>
-	    <!-- 国际化操作拦截器 如果采用基于（请求/Session/Cookie）则必需配置 -->
+		<!-- 国际化操作拦截器 如果采用基于（请求/Session/Cookie）则必需配置 -->
 		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor" />
 		<!-- 日志拦截器 -->
-		<bean class="cn.jeeweb.modules.common.interceptor.LogInterceptor" >
-		      <property name="openAccessLog" value="${openAccessLog}" />
+		<bean class="cn.jeeweb.modules.common.interceptor.LogInterceptor">
+			<property name="openAccessLog" value="${openAccessLog}" />
 		</bean>
 		<!--配置文件拦截器 -->
-		<bean class="cn.jeeweb.core.interceptor.ReloadConfigInterceptor" >
-		      <property name="developMode" value="${developMode}" />
-		      <property name="reloadConfigInterval" value="${reload.config.interval}" />
+		<bean class="cn.jeeweb.core.interceptor.ReloadConfigInterceptor">
+			<property name="developMode" value="${developMode}" />
+			<property name="reloadConfigInterval" value="${reload.config.interval}" />
 		</bean>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
@@ -165,7 +170,8 @@
 			<mvc:exclude-mapping path="/static/**" />
 			<!-- 需排除拦截的地址 -->
 			<mvc:exclude-mapping path="/upload/**" />
-			<bean class="cn.jeeweb.core.security.shiro.interceptor.PermissionInterceptorAdapter" />
+			<bean
+				class="cn.jeeweb.core.security.shiro.interceptor.PermissionInterceptorAdapter" />
 		</mvc:interceptor>
 	</mvc:interceptors>
 
@@ -199,13 +205,15 @@
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
 		p:defaultEncoding="UTF-8" p:maxUploadSize="55400000" p:uploadTempDir="${upload.base.dir}/temp" />
-	
-	<!-- 以下 validator  http://blog.csdn.net/xiaojiesu/article/details/50555714 在使用 mvc:annotation-driven 会 自动注册-->
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
-        <!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
-        <property name="validationMessageSource" ref="messageSource"/>
-    </bean>
+
+	<!-- 以下 validator http://blog.csdn.net/xiaojiesu/article/details/50555714 
+		在使用 mvc:annotation-driven 会 自动注册 -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 如果不加默认到 使用classpath下的 ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
 	<bean id="localeResolver"
 		class="org.springframework.web.servlet.i18n.SessionLocaleResolver" />
 

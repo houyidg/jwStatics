@@ -7,11 +7,12 @@
 <meta name="decorator" content="list" />
 <html:css name="syntaxhighlighter" />
 <html:component name="bootstrap-fileinput" />
+
 </head>
 <body title="学生管理">
 	<div style="margin-bottom: 20px">
-		<form:fileinput nested="false" path="infoid" uploadSuccessCallback="refreshCallback"
-			buttonText="批量添加" multiple="false"
+		<form:fileinput nested="false" path="infoid" buttonText="批量添加"
+			multiple="false"
 			uploadUrl="${adminPath}/yxsjtj/student/uploadSimditor"
 			extend="xls,xlsx" />
 	</div>
@@ -49,11 +50,14 @@
 		<grid:toolbar function="reset" />
 	</grid:grid>
 	<script>
-	  function refreshCallback(obj){
-		  reset('studentGridIdGrid');
-		  search('studentGridIdGrid');
-		  // var fileid= attachmentList[i].data.id;
-	  }
+		function infoiduploadsuccess(event, data, previewId, index) {
+			console.log('infoiduploadsuccess',data,index);
+			if(data.response){
+				alert("导入成功");
+			}else{
+				alert("导入失败");
+			}
+		}
 	</script>
 </body>
 </html>

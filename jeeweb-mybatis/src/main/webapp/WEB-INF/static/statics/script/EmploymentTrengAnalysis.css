@@ -153,7 +153,9 @@
 
 .oneBlock{
     float: left;
-    width: 18%;
+    width: auto;
+    margin-right: 5%;
+    margin-bottom: 10px;
 }
 .CHOSE{
     float: left;

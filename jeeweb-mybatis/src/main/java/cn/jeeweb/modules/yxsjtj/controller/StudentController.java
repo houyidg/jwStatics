@@ -1,17 +1,14 @@
 package cn.jeeweb.modules.yxsjtj.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.fileupload.FileUploadBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,12 +40,8 @@ import cn.jeeweb.core.query.utils.QueryableConvertUtils;
 import cn.jeeweb.core.query.wrapper.EntityWrapper;
 import cn.jeeweb.core.security.shiro.authz.annotation.RequiresMethodPermissions;
 import cn.jeeweb.core.security.shiro.authz.annotation.RequiresPathPermission;
-import cn.jeeweb.core.utils.MessageUtils;
 import cn.jeeweb.core.utils.ObjectUtils;
 import cn.jeeweb.core.utils.StringUtils;
-import cn.jeeweb.core.utils.upload.exception.FileNameLengthLimitExceededException;
-import cn.jeeweb.core.utils.upload.exception.InvalidExtensionException;
-import cn.jeeweb.modules.sys.entity.Attachment;
 import cn.jeeweb.modules.yxsjtj.entity.Student;
 import cn.jeeweb.modules.yxsjtj.entity.University;
 import cn.jeeweb.modules.yxsjtj.service.IStudentService;
@@ -71,6 +64,7 @@ public class StudentController extends BaseBeanController<Student> {
 	protected IStudentService studentService;
 	@Autowired
 	protected IUniversityService universityService;
+	private Thread doExcelthread;
 
 	public Student get(String id) {
 		if (!ObjectUtils.isNullOrEmpty(id)) {
@@ -147,45 +141,44 @@ public class StudentController extends BaseBeanController<Student> {
 	 */
 	@RequestMapping(value = "uploadSimditor", method = RequestMethod.POST)
 	@ResponseBody
-	public AjaxJson uploadSimditor(final HttpServletRequest request, HttpServletResponse response) {
-		response.setContentType("text/plain");
-		AjaxJson ajaxJson = new AjaxJson();
-		List<Attachment> attachmentList = new ArrayList<Attachment>();
-
-		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
-				request.getSession().getServletContext());
-		System.out.println("multipartResolver:" + multipartResolver.getFileUpload().getSizeMax());
-		Map<String, Object> data = new HashMap<String, Object>();
-		boolean isSuccess = false;
-		if (multipartResolver.isMultipart(request)) { // 判断request是否有文件上传
-			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-			Iterator<String> ite = multiRequest.getFileNames();
-			while (ite.hasNext()) {
-				final MultipartFile file = multiRequest.getFile(ite.next());
-//				new Thread(new Runnable() {
-//					@Override
-//					public void run() {
-//						
-//					}
-//				}).start();
-				try {
-					studentService.resolverStudents(request, file);
-					isSuccess = true;
-				} catch (Exception e) {
-					e.printStackTrace();
-					isSuccess = false;
+	public Callable<Boolean> uploadSimditor(final HttpServletRequest request, final HttpServletResponse response) {
+		Callable<Boolean> callback = new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				response.setContentType("text/plain");
+				CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
+						request.getSession().getServletContext());
+				System.out.println("multipartResolver:" + multipartResolver.getFileUpload().getSizeMax());
+				MultipartFile file = null;
+				if (multipartResolver.isMultipart(request)) { // 判断request是否有文件上传
+					MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+					Iterator<String> ite = multiRequest.getFileNames();
+					while (ite.hasNext()) {
+						file = multiRequest.getFile(ite.next());
+					}
 				}
-				break;
+				final MultipartFile mfile = file;
+				System.out.println("mfile:" + mfile + ",Thread:" + Thread.currentThread().getName());
+				boolean isSuccess = false;
+				if (mfile != null) {
+					try {
+						if (doExcelthread != null) {
+							doExcelthread.interrupt();
+						}
+					} catch (Exception e) {
+					}
+					try {
+						isSuccess = studentService.resolverStudents(request, mfile);
+					} catch (Exception e) {
+						e.printStackTrace();
+						isSuccess = false;
+					}
+					System.out.println("uploadSimditor:" + isSuccess);
+				}
+				return isSuccess;
 			}
-		}
-		Attachment attachment = new Attachment();
-		attachment.setStatus(isSuccess + "");
-		attachment.setId("id");
-		attachmentList.add(attachment);
-		ajaxJson.setData(attachmentList);
-		System.out.println("uploadSimditor:" + isSuccess);
-
-		return ajaxJson;
+		};
+		return callback;
 	}
 
 	@RequestMapping(value = "{id}/update", method = RequestMethod.POST)

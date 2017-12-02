@@ -101,6 +101,9 @@
 				#{item}
 			</foreach>
 		</if>
+		<if test="zy!=null">
+			AND t.zy=#{zy}
+		</if>
 		)
 		GROUP BY t.byqxdm
 	</select>
@@ -168,6 +171,9 @@
 				#{item}
 			</foreach>
 		</if>
+		<if test="zy!=null">
+			AND t.zy=#{zy}
+		</if>
 		)
 		GROUP BY t.byqxdm,t.yxdm
 	</select>
@@ -175,7 +181,7 @@
 <!-- getJYQSStatics -->
 	<select id="getJYQSStatics" parameterType="java.util.HashMap"
 		resultType="java.util.HashMap">
-		select t.yxdm,t.byqxdm,count(t.id) AS count,t.bysj from student t WHERE (1=1
+		select t.yxdm,count(t.id) AS count,t.bysj from student t WHERE (1=1
 
 		<if test="startDate !=null and endDate !=null">
 			AND t.bysj <![CDATA[>=]]>
@@ -253,8 +259,12 @@
 			(SELECT number FROM university WHERE
 			is211=#{is211})
 		</if>
+		
+		<if test="zy!=null">
+			AND t.zy=#{zy}
+		</if>
 		)
-		GROUP BY t.byqxdm,t.bysj,t.yxdm
+		GROUP BY t.yxdm,t.bysj ORDER BY t.bysj
 	</select>
 
 	

@@ -1,17 +1,15 @@
 package cn.jeeweb.modules.yxsjtj.utils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.T;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -21,56 +19,35 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.jeeweb.modules.yxsjtj.entity.Student;
-
 /**
  * 读取Excel
  */
 public class ReadExcelUtils<T> {
 	private Logger logger = LoggerFactory.getLogger(ReadExcelUtils.class);
-	private Workbook wb;
+	public Workbook wb = null;
 	private Sheet sheet;
 	private Row row;
-    private Class<T> objClazz;
-	public ReadExcelUtils(String filepath,Class clzz) {
-		if (filepath == null) {
-			return;
-		}
-		objClazz = clzz;
-		String ext = filepath.substring(filepath.lastIndexOf("."));
+	private Class<T> objClazz;
+
+	public ReadExcelUtils(InputStream in, String ext, Class clzz) {
 		try {
-			InputStream is = new FileInputStream(filepath);
-			if (".xls".equals(ext)) {
-				wb = new HSSFWorkbook(is);
-			} else if (".xlsx".equals(ext)) {
-				wb = new XSSFWorkbook(is);
-			} else {
-				wb = null;
+			objClazz = clzz;
+
+			if (!in.markSupported()) {
+				in = new PushbackInputStream(in, 8);
 			}
-		} catch (FileNotFoundException e) {
-			logger.error("FileNotFoundException", e);
-		} catch (IOException e) {
-			logger.error("IOException", e);
+			if (POIFSFileSystem.hasPOIFSHeader(in)) {
+				wb =new HSSFWorkbook(in);
+			}
+			if (POIXMLDocument.hasOOXMLHeader(in)) {
+				wb =new XSSFWorkbook(OPCPackage.open(in));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
-	public ReadExcelUtils(InputStream is,String ext,Class clzz) {
-		objClazz = clzz;
-		try {
-			if ("xls".equals(ext)) {
-				wb = new HSSFWorkbook(is);
-			} else if ("xlsx".equals(ext)) {
-				wb = new XSSFWorkbook(is);
-			} else {
-				wb = null;
-			}
-		} catch (FileNotFoundException e) {
-			logger.error("FileNotFoundException", e);
-		} catch (IOException e) {
-			logger.error("IOException", e);
-		}
-	}
-	
-	
+
 	/**
 	 * 读取Excel表格表头的内容
 	 * 
@@ -93,6 +70,7 @@ public class ReadExcelUtils<T> {
 		}
 		return title;
 	}
+
 	/**
 	 * 读取Excel表格表头的内容
 	 * 
@@ -112,43 +90,41 @@ public class ReadExcelUtils<T> {
 		String[] title = new String[colNum];
 		for (int i = 0; i < colNum; i++) {
 			String value = row.getCell(i).getStringCellValue();
-			if(value.equals("院校代码")) {
+			if (value.equals("院校代码")) {
 				title[i] = "number";
-			}else if(value.equals("院校名称")) {
+			} else if (value.equals("院校名称")) {
 				title[i] = "name";
-			}else if(value.equals("所在地市州")) {
+			} else if (value.equals("所在地市州")) {
 				title[i] = "areaid";
-			}else if(value.equals("所在地")) {
+			} else if (value.equals("所在地")) {
 				title[i] = "provinceid";
-			}
-			else if(value.equals("院校性质")) {
+			} else if (value.equals("院校性质")) {
 				title[i] = "featureid";
-			}else if(value.equals("隶属单位")) {
+			} else if (value.equals("隶属单位")) {
 				title[i] = "belongto";
-			}else if(value.equals("办学类型")) {
+			} else if (value.equals("办学类型")) {
 				title[i] = "typeid";
-			}else if(value.equals("is211")) {
+			} else if (value.equals("is211")) {
 				title[i] = "is211";
-			}else if(value.equals("is985")) {
+			} else if (value.equals("is985")) {
 				title[i] = "is985";
-			}else if(value.equals("独立学院")) {
+			} else if (value.equals("独立学院")) {
 				title[i] = "isindependent";
-			}else if(value.equals("新增本科")) {
+			} else if (value.equals("新增本科")) {
 				title[i] = "isnewbk";
-			}else if(value.equals("示范高职")) {
+			} else if (value.equals("示范高职")) {
 				title[i] = "issfgz";
-			}else if(value.equals("科研机构")) {
+			} else if (value.equals("科研机构")) {
 				title[i] = "iskyjg";
-			}else if(value.equals("民办院校")) {
+			} else if (value.equals("民办院校")) {
 				title[i] = "ismbyx";
-			}else if(value.equals("培养专科")) {
+			} else if (value.equals("培养专科")) {
 				title[i] = "ispyzk";
-			}else if(value.equals("培养本科")) {
+			} else if (value.equals("培养本科")) {
 				title[i] = "ispybk";
-			}
-			else if(value.equals("培养硕士")) {
+			} else if (value.equals("培养硕士")) {
 				title[i] = "ispyss";
-			}else if(value.equals("培养博士")) {
+			} else if (value.equals("培养博士")) {
 				title[i] = "ispybs";
 			}
 		}
@@ -166,7 +142,7 @@ public class ReadExcelUtils<T> {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
-		
+
 		String[] excelTitle = readExcelTitle2();
 		ArrayList<T> list = new ArrayList<>();
 		sheet = wb.getSheetAt(0);
@@ -188,14 +164,14 @@ public class ReadExcelUtils<T> {
 				String value = cell.getStringCellValue();
 				Field field = clzz.getDeclaredField(title.toLowerCase());
 				field.setAccessible(true);
-				if(value.equals("false")) {
+				if (value.equals("false")) {
 					field.set(student, (short) 0);
-				}else if(value.equals("true")) {
+				} else if (value.equals("true")) {
 					field.set(student, (short) 1);
-				}else {
+				} else {
 					field.set(student, value);
 				}
-				
+
 				j++;
 			}
 			if (student != null) {
@@ -204,6 +180,7 @@ public class ReadExcelUtils<T> {
 		}
 		return list;
 	}
+
 	/**
 	 * 读取Excel数据内容
 	 * 
@@ -224,10 +201,10 @@ public class ReadExcelUtils<T> {
 		int colNum = row.getPhysicalNumberOfCells();
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		T student = null;
-		System.out.println("rowNum:"+rowNum+",colNum:"+colNum);
+		System.out.println("rowNum:" + rowNum + ",colNum:" + colNum);
 		for (int i = 1; i <= rowNum; i++) {
 			row = sheet.getRow(i);
-			System.out.println("loop:rowNumber:"+i+",totalrowNum:"+rowNum);
+			System.out.println("loop:rowNumber:" + i + ",totalrowNum:" + rowNum);
 			student = objClazz.newInstance();
 			Class clzz = student.getClass();
 			// 遍历列
@@ -235,8 +212,8 @@ public class ReadExcelUtils<T> {
 			while ((++j) < colNum) {
 				String title = excelTitle[j];
 				Cell cell = row.getCell(j);
-			
-				if(cell==null) {
+
+				if (cell == null) {
 					continue;
 				}
 				cell.setCellType(Cell.CELL_TYPE_STRING);
@@ -245,11 +222,11 @@ public class ReadExcelUtils<T> {
 					Field field = clzz.getDeclaredField(title.toLowerCase());
 					field.setAccessible(true);
 					field.set(student, value);
-				}catch (NoSuchFieldException e) {
-					System.out.println("NoSuchFieldException:,title:"+title);
+				} catch (NoSuchFieldException e) {
+					System.out.println("NoSuchFieldException:,title:" + title);
 				}
 			}
-			
+
 			if (student != null) {
 				list.add(student);
 			}

@@ -20,12 +20,13 @@ $(function() {
 				var CBelongto = $("#CBelongto .fixedId").val();
 				var CType = $("#CType .fixedId").val();
 				var CName = $("#CName .fixedId").val();
+				var CZy = $("#CZy .fixedId").val();
 				// alert(CArea + "," + CFeature + "," + CBelongto + "," + CType+
 				// "," + CName+','+start_time);
 				var newUrl = realBaseUrl + "/ajaxChartList";
 				var arg = "actiontype="+actiontype+"&areaid=" + CArea + "&featureid="
-						+ CFeature + "&belongto=" + CBelongto + "&typeid="
-						+ CType+"&yxdms="+CName+"&startDate="+start_time+"&endDate="+end_time;
+						+ CFeature + "&belongto=" + CBelongto + "&typeid="+ CType+"&zy="+CZy
+						+"&yxdms="+CName+"&startDate="+start_time+"&endDate="+end_time;
 				newUrl += "?" + arg;
 				console.log("newUrl:", newUrl)
 				$.ajax({
@@ -96,14 +97,14 @@ function generateChosen(sid,data){
 				dataListHeight : 500, // 下拉框的高度
 				placeholderTxt : '全部', // 初始化提示文字
 				searchOpt : true,
-				multi : true,
+				multi :sid=="CZy"?false:true,
 				maxSize : 5,
 				joinChar : ',',
 				clearOpt:true,
-				removeCallback : (id, name, _self)=>{
+				removeCallback : function(id, name, _self){
 					parseParamsInitChose(sid,id,name, _self);
 				},
-				selectedCallback :  (id, name, _self)=>{
+				selectedCallback :function (id, name, _self){
 					parseParamsInitChose(sid,id, name, _self);
 				}
 			});

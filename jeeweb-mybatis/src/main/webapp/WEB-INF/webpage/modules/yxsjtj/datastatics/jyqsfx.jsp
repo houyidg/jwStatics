@@ -9,18 +9,7 @@
 <link href="${staticPath}/statics/script/common.css" rel="stylesheet">
 <link href="${staticPath}/statics/script/EmploymentTrengAnalysis.css"
 	rel="stylesheet">
-<style type="text/css">
-.btnReset {
-	cursor: pointer;
-	padding: 5px 18px;
-	background: #d08e29;
-	color: #f4f4f4;
-	border-radius: 7px;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
-	-o-border-radius: 7px;
-}
-</style>
+
 <link href="${staticPath}/statics/script/UI/chosen.css" rel="stylesheet">
 <script type="application/javascript"
 	src="${staticPath}/statics/JS/UI/My97DatePicker/WdatePicker.js"></script>

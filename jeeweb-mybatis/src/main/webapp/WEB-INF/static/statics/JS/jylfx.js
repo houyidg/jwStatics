@@ -1,6 +1,7 @@
 /**
  * Created by cm on 2017/10/20.
  */
+var start_time, end_time;
 $(function() {
 	init();
 	$("#reset").click(function() {
@@ -11,23 +12,24 @@ $(function() {
 			function() {
 				// <!--universityid featureid belongto startDate endDate typeid
 				// areaid byqxdms byqxdm -->
-				var start_time = $("#startTime").val();
-				start_time = start_time!=""?start_time+"00":"";
-				var end_time = $("#endTime").val();
-				end_time = end_time!=""?end_time+"12":"";
+				start_time = $("#startTime").val();
+				start_time = start_time != "" ? start_time + "00" : "";
+				end_time = $("#endTime").val();
+				end_time = end_time != "" ? end_time + "12" : "";
 				var CArea = $("#CArea .fixedId").val();
 				var CFeature = $("#CFeature .fixedId").val();
 				var CBelongto = $("#CBelongto .fixedId").val();
 				var CType = $("#CType .fixedId").val();
 				var CName = $("#CName .fixedId").val();
+				var CZy = $("#CZy .fixedId").val();
 				// alert(CArea + "," + CFeature + "," + CBelongto + "," + CType+
 				// "," + CName+','+start_time);
 				var newUrl = realBaseUrl + "/ajaxChartList";
-				var arg = "actiontype="+actiontype+"&areaid=" + CArea + "&featureid="
-						+ CFeature + "&belongto=" + CBelongto + "&typeid="
-						+ CType+"&yxdms="+CName+"&startDate="+start_time+"&endDate="+end_time;
+				var arg = "actiontype=" + actiontype + "&areaid=" + CArea
+						+ "&featureid=" + CFeature + "&belongto=" + CBelongto
+						+ "&typeid=" + CType + "&yxdms=" + CName+"&zy="+CZy
+						+ "&startDate=" + start_time + "&endDate=" + end_time;
 				newUrl += "?" + arg;
-				console.log("newUrl:", newUrl)
 				$.ajax({
 					url : newUrl,
 					dataType : 'json',
@@ -52,7 +54,7 @@ function init() {
 	initChose("CName", url_1, 'type=yxmc');
 	initChose("CZy", url_1, 'type=zy');
 }
-function parseParamsInitChose(idname,id, name, _self) {
+function parseParamsInitChose(idname, id, name, _self) {
 	if (idname != "CName" && idname != "CZy") {
 		var CQx = $("#CQx .fixedId").val();
 		var CArea = $("#CArea .fixedId").val();
@@ -60,13 +62,12 @@ function parseParamsInitChose(idname,id, name, _self) {
 		var CBelongto = $("#CBelongto .fixedId").val();
 		var CType = $("#CType .fixedId").val();
 		var newUrl = realBaseUrl + "/ajaxPropertyList";
-		var arg = "type=yxmc&areaid=" + CArea
-				+ "&featureid=" + CFeature
-				+ "&belongto=" + CBelongto 
-				+ "&typeid=" + CType
-				+ "&bysqx=" + CQx;
+		var arg = "type=yxmc&areaid=" + CArea + "&featureid=" + CFeature
+				+ "&belongto=" + CBelongto + "&typeid=" + CType + "&bysqx="
+				+ CQx;
 		initChose("CName", newUrl, arg);
-	}if (idname == "CName") {
+	}
+	if (idname == "CName") {
 		var CName = $("#CName .fixedId").val();
 		var newUrl = realBaseUrl + "/ajaxPropertyList";
 		var arg = "type=zy&yxdms=" + CName;
@@ -75,39 +76,39 @@ function parseParamsInitChose(idname,id, name, _self) {
 }
 function initChose(idname, url, param) {
 	url += "?" + param;
-	console.log(idname, url)
 	$.ajax({
 		url : url,
 		dataType : 'json',
 		type : 'GET',
 		success : function(data) {
-			console.log('initChose:', data);
-			generateChosen(idname,data);
+			generateChosen(idname, data);
 		}
 	});
 }
 
-function generateChosen(sid,data){
-	$("#" + sid).Chosen(
-			{
-				data : data, // 数据
-				chosenWidth : 200, // 选择框宽度
-				dataListWidth : 200, // 下拉框的宽度
-				dataListHeight : 500, // 下拉框的高度
-				placeholderTxt : '全部', // 初始化提示文字
-				searchOpt : true,
-				multi : true,
-				maxSize : 5,
-				joinChar : ',',
-				clearOpt:true,
-				removeCallback : (id, name, _self)=>{
-					parseParamsInitChose(sid,id,name, _self);
-				},
-				selectedCallback :  (id, name, _self)=>{
-					parseParamsInitChose(sid,id, name, _self);
-				}
-			});
+function generateChosen(sid, data) {
+	$("#" + sid).Chosen({
+		data : data, // 数据
+		chosenWidth : 200, // 选择框宽度
+		dataListWidth : 200, // 下拉框的宽度
+		dataListHeight : 500, // 下拉框的高度
+		placeholderTxt : '全部', // 初始化提示文字
+		searchOpt : true,
+		multi :sid=="CZy"?false:true,
+		maxSize : 5,
+		joinChar : ',',
+		clearOpt : true,
+		removeCallback : function(id, name, _self) {
+			console.log('removeCallback');
+			parseParamsInitChose(sid, id, name, _self);
+		},
+		clearOptCallback: function(id, name, _self) {
+			console.log('clearOptCallback');
+			parseParamsInitChose(sid, id, name, _self);
+		},
+		selectedCallback : function(id, name, _self) {
+			console.log('selectedCallback');
+			parseParamsInitChose(sid, id, name, _self);
+		}
+	});
 }
-
-
-

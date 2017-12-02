@@ -46,13 +46,13 @@
 			autoWidth: true,           //表格宽度是否根据自动拉伸
 			gapWidth: 9,                //表格头部td的左右padding加边框宽度
 			
-			showFooter: true,	//显示表格底
+			showFooter: false,	//显示表格底
 			colToggle: true,	
 			colResize: true,	
 			
 			dgResize: true, 	//允许拉伸表格
 			
-			dgHeaderHeight: false,
+			dgHeaderHeight: true,
 			
 			headerColspan: false,
 			firstRowspan: false,
@@ -63,15 +63,15 @@
 			
 			heightAdjust: true,
 			
-			hasFirstCol: true,	//是否显示表格序列号
+			hasFirstCol: false,	//是否显示表格序列号
 			firstColWidth: 25,
 			firstColHeaderName: '',
 			firstColData: [],
 			
-			staticData: false,
+			staticData: true,
 			
-			conDivAuto: false,	//自动行高
-			dgAutoHeight: false	//表格自动高度
+			conDivAuto: true,	//自动行高
+			dgAutoHeight: true	//表格自动高度
 		};
 		
 		var opt = $.extend({}, dafaults, options);
@@ -724,7 +724,7 @@
 	        
 	        
 	        //后台请求获得数据
-			addAsyncData: function(pageNow, rowNum, getDataTotal){
+			addAsyncData: function(pageNow, rowNum, staticData){
 				var headerTdDiv = _self.find('.dgHeader .dgHeaderTr td .dgHeaderTdDiv');
 				widthArr = [];
 				headerTdDiv.each(function(index){
@@ -736,27 +736,19 @@
 				//数据加载中的loading效果
 				_self.find('.dgLoading').css({'width': _self.outerWidth(), 'height': _self.outerHeight()}).show();
 				
-				
-				//传送页面参数,其中当前页和显示行数是必须的
-				var _param = {'pageNow': pageNow, 'rowsNum':rowNum};
-				if(opt.dataParam){
-					$.extend(_param, opt.dataParam);
-				};
-				if(opt.sortType == 'ajax'){
-					$.extend(_param, {'sortRule':opt.sortRule, 'sortOrderBy':opt.sortOrderBy});
-				}
+//				
+//				//传送页面参数,其中当前页和显示行数是必须的
+//				var _param = {'pageNow': pageNow, 'rowsNum':rowNum};
+//				if(opt.dataParam){
+//					$.extend(_param, opt.dataParam);
+//				};
+//				if(opt.sortType == 'ajax'){
+//					$.extend(_param, {'sortRule':opt.sortRule, 'sortOrderBy':opt.sortOrderBy});
+//				}
 				
 				//第一次加载数据时获得数据的条数
-				getDataTotal && $.extend(_param, {'getDataTotal': 1});
-				
-		        $.ajax({
-		            url: opt.url,
-		            type: opt.method,
-		            data: _param,
-		            dataType: 'text',
-		            timeout: opt.timeout*1000,
-		            success: function(data){
-		        		data = eval('('+data+')');
+//				getDataTotal && $.extend(_param, {'getDataTotal': 1});
+		        		var data = staticData;
 		        		
 		        		opt.debugAjax && win.console && console.log(data);
 		            	//显示表格
@@ -872,14 +864,6 @@
 						//表格加载完毕后的执行
 				        opt.ajaxCallback(data, _self);
 						
-		            },
-		            error: function(xml,error){
-		            	if(error == 'timeout'){ 
-		            		alert(opt.timeoutMsg);
-		            	}
-		            	_self.find('.dgLoading').hide();
-		            }
-		        });
 	        },
 	        
 	        dgHeight: function(){
@@ -929,12 +913,12 @@
 		opt.colResize && Datagrid.colResize();
 		
 		//填充表格数据
-		if(opt.staticData !== false){
-			Datagrid.addStaticData();
-		}else{
-			Datagrid.addAsyncData(1, _self.find('.rowNum').val(), true);
-		}
-        
+//		if(opt.staticData !== false){
+//			Datagrid.addStaticData();
+//		}else{
+//		
+//		}
+		Datagrid.addAsyncData(1, _self.find('.rowNum').val(), opt.staticData);
         //表格加载完毕后的执行
         opt.initCallback(_self);
 	};
