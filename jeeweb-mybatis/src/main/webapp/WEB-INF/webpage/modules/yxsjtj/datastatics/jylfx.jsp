@@ -6,6 +6,7 @@
 <meta name="decorator" content="list" />
 <html:css name="syntaxhighlighter" />
 <link href="${staticPath}/statics/script/common.css" rel="stylesheet">
+<link href="${staticPath}/statics/script/datagrid.css" rel="stylesheet">
 <link href="${staticPath}/statics/script/EmploymentTrengAnalysis.css"
 	rel="stylesheet">
 <link href="${staticPath}/statics/script/UI/chosen.css" rel="stylesheet">

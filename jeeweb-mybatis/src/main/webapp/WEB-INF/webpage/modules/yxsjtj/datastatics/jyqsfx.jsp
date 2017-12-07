@@ -9,7 +9,26 @@
 <link href="${staticPath}/statics/script/common.css" rel="stylesheet">
 <link href="${staticPath}/statics/script/EmploymentTrengAnalysis.css"
 	rel="stylesheet">
+<style type="text/css">
+.oneBlock {
+	float: left;
+	width: 33%;
+	margin: 5px 0;
+}
 
+.nameLab1 {
+	font-size: 16px;
+	font-weight: bolder;
+}
+
+.checkbox1 {
+	margin: 2px;
+}
+
+.checkCon {
+	margin-right: 20px;
+}
+</style>
 <link href="${staticPath}/statics/script/UI/chosen.css" rel="stylesheet">
 <script type="application/javascript"
 	src="${staticPath}/statics/JS/UI/My97DatePicker/WdatePicker.js"></script>
@@ -34,7 +53,7 @@
 			</div>
 			<div class="CHOSE">
 				<div class="oneBlock">
-					<div class="nameLab">就业形势：</div>
+					<div class="nameLab">就业 形势：</div>
 					<div class="chosedown" id="CQx"></div>
 				</div>
 				<div class="oneBlock">
@@ -43,27 +62,38 @@
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">院校性质：</div>
+					<div class="nameLab">院校 性质：</div>
 					<div class="chosedown" id="CFeature"></div>
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">隶属单位：</div>
+					<div class="nameLab">隶属 单位：</div>
 					<div class="chosedown" id="CBelongto"></div>
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">办学类型：</div>
+					<div class="nameLab">办学 类型：</div>
 					<div class="chosedown" id="CType"></div>
 				</div>
-					<div class="oneBlock">
-					<div class="nameLab">院校：</div>
+				<div class="oneBlock">
+					<div class="nameLab">院 校：</div>
 					<div class="chosedown" id="CName"></div>
 				</div>
 				<div class="oneBlock">
-					<div class="nameLab">专业：</div>
+					<div class="nameLab">专 业：</div>
 					<div class="chosedown" id="CZy"></div>
 				</div>
+
+				<div class="oneBlock">
+					<span class="checkCon">
+						<input type="checkbox"
+						class="checkbox1" id="is985"/>
+						<span class="nameLab1">985</span>
+						</span>
+					<span class="checkCon">
+					<input type="checkbox"  data-type="checkbox" class="checkbox1" id="is211" /><span class="nameLab1">211</span></span>
+				</div>
+
 			</div>
 			<div class="sureCon">
 				<span id="sure" class="btnSure">确定</span><span id="reset"
@@ -75,8 +105,6 @@
 			<div class="top_lab">
 				<ul id="tableChose1">
 					<!-- 	<!--<li class="nowPic">饼图</li>-->
-					-->
-
 				</ul>
 			</div>
 			<div class="pic_con" id="tableShow">
@@ -84,8 +112,18 @@
 				<!--<div class="Picshow" id="bar" ></div>-->
 			</div>
 		</div>
-
 	</div>
 
+	<script type="text/javascript">
+		//checkbox
+		$("input[id='is985']").click(function() {
+			console.log("985");
+			loadCNameByOther();
+		});
+	    $('[data-type="checkbox"]').click(function() {
+			console.log("is211");
+			loadCNameByOther();
+		});
+	</script>
 </body>
 </html>

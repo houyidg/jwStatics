@@ -246,18 +246,18 @@
 		<if test="is985!=null and is211==null">
 			AND t.yxdm IN
 			(SELECT number FROM university WHERE
-			is985=#{is985})
+			is985=true)
 		</if>
 		<if test="is211!=null and is985==null">
 			AND t.yxdm IN
 			(SELECT number FROM university WHERE
-			is211=#{is211})
+			is211=true)
 		</if>
 
 		<if test="is211!=null and is985!=null">
 			AND t.yxdm IN
 			(SELECT number FROM university WHERE
-			is211=#{is211})
+			is211=true AND is985=true)
 		</if>
 		
 		<if test="zy!=null">
