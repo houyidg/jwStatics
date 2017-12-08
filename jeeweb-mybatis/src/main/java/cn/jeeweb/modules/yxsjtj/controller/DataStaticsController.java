@@ -29,6 +29,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializeFilter;
+import com.sun.xml.bind.v2.TODO;
 
 import cn.jeeweb.core.common.controller.BaseBeanController;
 import cn.jeeweb.core.common.data.DuplicateValid;
@@ -61,12 +62,15 @@ import cn.jeeweb.modules.yxsjtj.entity.JylEntry;
 import cn.jeeweb.modules.yxsjtj.entity.JyqsEntry;
 import cn.jeeweb.modules.yxsjtj.entity.JyqsLine;
 import cn.jeeweb.modules.yxsjtj.entity.LineEntry;
+import cn.jeeweb.modules.yxsjtj.entity.Major;
 import cn.jeeweb.modules.yxsjtj.entity.PropertyEntry;
 import cn.jeeweb.modules.yxsjtj.entity.PieEntry;
 import cn.jeeweb.modules.yxsjtj.entity.Student;
 import cn.jeeweb.modules.yxsjtj.entity.University;
+import cn.jeeweb.modules.yxsjtj.service.IMajorService;
 import cn.jeeweb.modules.yxsjtj.service.IStudentService;
 import cn.jeeweb.modules.yxsjtj.service.IUniversityService;
+import cn.jeeweb.modules.yxsjtj.service.impl.MajorServiceImpl;
 import cn.jeeweb.modules.yxsjtj.utils.ChartUtils;
 
 /**
@@ -86,6 +90,8 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 	private static final String ACTION_TYPE_JYQSFX = "jyqsfx";// 就业趋势分析
 	@Autowired
 	protected IStudentService studentService;
+	@Autowired
+	protected IMajorService majorService;
 	@Autowired
 	protected IUniversityService universityService;
 	private String AllCountId = "-1";// 展示所有数据
@@ -116,14 +122,16 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 			for (University university : selectList) {
 				areaList.add(new PropertyEntry(university.getNumber(), university.getName()));
 			}
-		} else if ("zy".equals(type)) {// 院校名称请求
-			// 整理专业数据 universityid
-			EntityWrapper<Student> entityWrapper2 = new EntityWrapper<>(Student.class);
-			entityWrapper2.setSqlSelect(" DISTINCT zy ");
-			addUniversityCondition(entityWrapper2, "yxdms", request);
-			List<Object> resullList = studentService.selectObjs(entityWrapper2);
-			for (Object value : resullList) {
-				areaList.add(new PropertyEntry(value.toString(), value.toString()));
+		} else if ("zy".equals(type)) {// zy
+//			Map<String, Object> paramtersMap = getRequestParamterMap(request.getParameterMap());
+//			List<Map<String,Object>> zyMapByYxdms = studentService.getZyMapByYxdms(paramtersMap);
+			
+			EntityWrapper<Major> entityWrapper = new EntityWrapper<>(Major.class);
+			entityWrapper.setSqlSelect("zydm,zymc");
+			// 整理院校数据
+			List<Map<String,Object>> selectMaps = majorService.selectMaps(entityWrapper);
+			for (Map<String,Object> map : selectMaps) {
+				areaList.add(new PropertyEntry(map.get("zydm").toString(), map.get("zymc").toString()));
 			}
 		} else {
 			List<Dict> dictList = DictUtils.getDictList(type);

@@ -37,42 +37,21 @@ public class UniversityServiceImpl  extends CommonServiceImpl<UniversityMapper,U
 		InputStream inputStream = file.getInputStream();
 		String filename = file.getOriginalFilename();
 		String fileext = StringUtils.getExtensionName(filename);
-		ArrayList<University> arrayList = new ReadExcelUtils(inputStream, fileext,University.class).readExcelContent2();
+		ArrayList<University> arrayList = new ReadExcelUtils(inputStream, fileext,University.class).readUniversity();
 		for(University university:arrayList) {
-			List<Dict> dictList = DictUtils.getDictList("yxszd");
-			for(Dict dict:dictList) {
-				if(dict.getLabel().equals(university.getAreaid())) {
-					university.setAreaid(dict.getValue());
-				}
-			}
-			dictList = DictUtils.getDictList("yxxz");
-			for(Dict dict:dictList) {
-				if(dict.getLabel().equals(university.getFeatureid())) {
-					university.setFeatureid(dict.getValue());
-				}
-			}
-			dictList = DictUtils.getDictList("lsdw");
-			for(Dict dict:dictList) {
-				if(dict.getLabel().equals(university.getBelongto())) {
-					university.setBelongto(dict.getValue());
-				}
-			}
-			dictList = DictUtils.getDictList("bxlx");
-			for(Dict dict:dictList) {
-				if(dict.getLabel().equals(university.getTypeid())) {
-					university.setTypeid(dict.getValue());
-				}
-			}
-			dictList = DictUtils.getDictList("yxszs");
-			for(Dict dict:dictList) {
-				if(dict.getLabel().equals(university.getProvinceid())) {
-					university.setProvinceid(dict.getValue());
-				}
-			}
+			university.setAreaid(DictUtils.getDictValue(university.getAreaid(), "yxszd", ""));
+			
+			university.setFeatureid(DictUtils.getDictValue(university.getFeatureid(), "yxxz", ""));
+			
+			university.setBelongto(DictUtils.getDictValue(university.getBelongto(), "lsdw", ""));
+			
+			university.setTypeid(DictUtils.getDictValue(university.getTypeid(), "bxlx", ""));
+			
+			university.setProvinceid(DictUtils.getDictValue(university.getProvinceid(), "yxszs", ""));
 		}
 		boolean insertBatch = insertBatch(arrayList);
 		System.out.println("insertBatch:"+insertBatch);
 		
-		return true;
+		return insertBatch;
 	}
 }

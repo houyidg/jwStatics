@@ -27,5 +27,6 @@ public interface IStudentService extends ICommonService<Student> {
 	List<Map<String, Object>> getStatics(Map<String, Object> data);
 	List<Map<String, Object>> getJYQSStatics(Map<String, Object> data);
 	List<Map<String, Object>> getJYLStatics(Map<String, Object> data);
+	List<Map<String, Object>> getZyMapByYxdms(Map<String, Object> data); 
 }
 

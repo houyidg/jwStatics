@@ -1,41 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="cn.jeeweb.modules.yxsjtj.mapper.StudentMapper">
-	<sql id="Base_Column_List">
-		t.ksh,
-		t.bysj,
-		t.yxdm,
-		t.sfzh,
-		t.xm,
-		t.xbdm,
-		t.mzdm,
-		t.zzmmdm,
-		t.xldm,
-		t.zydm,
-		t.zy,
-		t.zyfx,
-		t.pyfsdm,
-		t.syszddm,
-		t.dxhwpdw,
-		t.xz,
-		t.rxsj,
-		t.knslbdm,
-		t.sfslbdm,
-		t.byqxdm,
-		t.dwzzjgdm,
-		t.dwmc,
-		t.dwxzdm,
-		t.dwhydm,
-		t.dwszddm,
-		t.gzzwlbdm,
-		t.bdzqflbdm,
-		t.bdzqwdwmc,
-		t.qwdwszddm,
-		t.bdzbh,
-		t.bdqssj,
-		t.id
-	</sql>
+<mapper namespace="cn.jeeweb.modules.yxsjtj.mapper.StudentMapper" >
 
+  <sql id="Base_Column_List" >
+    t.ksh,
+    t.bysj,
+    t.yxdm,
+    t.sfzh,
+    t.xm,
+    t.xbdm,
+    t.mzdm,
+    t.zzmmdm,
+    t.xldm,
+    t.zydm,
+    t.zy,
+    t.zyfx,
+    t.pyfsdm,
+    t.syszddm,
+    t.dxhwpdw,
+    t.xz,
+    t.rxsj,
+    t.knslbdm,
+    t.sfslbdm,
+    t.byqxdm,
+    t.dwzzjgdm,
+    t.dwmc,
+    t.dwxzdm,
+    t.dwhydm,
+    t.dwszddm,
+    t.gzzwlbdm,
+    t.bdzqflbdm,
+    t.bdzqwdwmc,
+    t.qwdwszddm,
+    t.bdzbh,
+    t.bdqssj,
+    t.id
+  </sql>
+  
 	<!--universityid featureid belongto startDate endDate typeid areaid byqxdms 
 		byqxdm -->
 	<select id="getStatics" parameterType="java.util.HashMap"
@@ -102,7 +103,7 @@
 			</foreach>
 		</if>
 		<if test="zy!=null">
-			AND t.zy=#{zy}
+			AND t.zydm=#{zy}
 		</if>
 		)
 		GROUP BY t.byqxdm
@@ -172,7 +173,7 @@
 			</foreach>
 		</if>
 		<if test="zy!=null">
-			AND t.zy=#{zy}
+			AND t.zydm=#{zy}
 		</if>
 		)
 		GROUP BY t.byqxdm,t.yxdm
@@ -261,11 +262,27 @@
 		</if>
 		
 		<if test="zy!=null">
-			AND t.zy=#{zy}
+			AND t.zydm=#{zy}
 		</if>
 		)
 		GROUP BY t.yxdm,t.bysj ORDER BY t.bysj
 	</select>
-
 	
+	
+	<!-- 获取专业信息 -->
+	<select id="getZyMapByYxdms" parameterType="java.util.HashMap"
+		resultType="java.util.HashMap">
+		SELECT DISTINCT t.zydm AS zydm,m.zymc AS zymc from student t,major m WHERE 
+		(1=1 
+		<if test="yxdms!=null">
+			AND t.yxdm IN
+			<foreach collection="yxdms" item="item" open="("
+				separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		AND t.zydm = m.zydm
+		)
+		
+	</select>
 </mapper>

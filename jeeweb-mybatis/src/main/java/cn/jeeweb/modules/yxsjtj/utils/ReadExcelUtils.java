@@ -5,6 +5,7 @@ import java.io.PushbackInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -37,10 +38,10 @@ public class ReadExcelUtils<T> {
 				in = new PushbackInputStream(in, 8);
 			}
 			if (POIFSFileSystem.hasPOIFSHeader(in)) {
-				wb =new HSSFWorkbook(in);
+				wb = new HSSFWorkbook(in);
 			}
 			if (POIXMLDocument.hasOOXMLHeader(in)) {
-				wb =new XSSFWorkbook(OPCPackage.open(in));
+				wb = new XSSFWorkbook(OPCPackage.open(in));
 			}
 
 		} catch (Exception e) {
@@ -55,7 +56,7 @@ public class ReadExcelUtils<T> {
 	 * @return String 表头内容的数组
 	 * @author zengwendong
 	 */
-	public String[] readExcelTitle() throws Exception {
+	public List<String> readExcelStudTitle() throws Exception {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
@@ -64,11 +65,11 @@ public class ReadExcelUtils<T> {
 		// 标题总列数
 		int colNum = row.getPhysicalNumberOfCells();
 		System.out.println("colNum:" + colNum);
-		String[] title = new String[colNum];
+		List<String> titleList = new ArrayList<>();
 		for (int i = 0; i < colNum; i++) {
-			title[i] = row.getCell(i).getStringCellValue();
+			titleList.add(row.getCell(i).getStringCellValue()) ;
 		}
-		return title;
+		return titleList;
 	}
 
 	/**
@@ -78,7 +79,7 @@ public class ReadExcelUtils<T> {
 	 * @return String 表头内容的数组
 	 * @author zengwendong
 	 */
-	public String[] readExcelTitle2() throws Exception {
+	public List<String> readExcelUniverTitle() throws Exception {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
@@ -87,48 +88,78 @@ public class ReadExcelUtils<T> {
 		// 标题总列数
 		int colNum = row.getPhysicalNumberOfCells();
 		System.out.println("colNum:" + colNum);
-		String[] title = new String[colNum];
+		List<String> titleList = new ArrayList<>();
 		for (int i = 0; i < colNum; i++) {
 			String value = row.getCell(i).getStringCellValue();
 			if (value.equals("院校代码")) {
-				title[i] = "number";
+				titleList.add("number");
 			} else if (value.equals("院校名称")) {
-				title[i] = "name";
+				titleList.add("name");
 			} else if (value.equals("所在地市州")) {
-				title[i] = "areaid";
+				titleList.add("areaid"); 
 			} else if (value.equals("所在地")) {
-				title[i] = "provinceid";
+				titleList.add("provinceid"); 
 			} else if (value.equals("院校性质")) {
-				title[i] = "featureid";
+				titleList.add("featureid"); 
 			} else if (value.equals("隶属单位")) {
-				title[i] = "belongto";
+				titleList.add("belongto"); 
 			} else if (value.equals("办学类型")) {
-				title[i] = "typeid";
+				titleList.add("typeid"); 
 			} else if (value.equals("is211")) {
-				title[i] = "is211";
+				titleList.add("is211");
 			} else if (value.equals("is985")) {
-				title[i] = "is985";
+				titleList.add("is985"); 
 			} else if (value.equals("独立学院")) {
-				title[i] = "isindependent";
+				titleList.add("isindependent"); 
 			} else if (value.equals("新增本科")) {
-				title[i] = "isnewbk";
+				titleList.add("isnewbk");
 			} else if (value.equals("示范高职")) {
-				title[i] = "issfgz";
+				titleList.add("issfgz");
 			} else if (value.equals("科研机构")) {
-				title[i] = "iskyjg";
+				titleList.add("iskyjg");
 			} else if (value.equals("民办院校")) {
-				title[i] = "ismbyx";
+				titleList.add("ismbyx");
 			} else if (value.equals("培养专科")) {
-				title[i] = "ispyzk";
+				titleList.add("ispyzk"); 
 			} else if (value.equals("培养本科")) {
-				title[i] = "ispybk";
+				titleList.add("ispybk");
 			} else if (value.equals("培养硕士")) {
-				title[i] = "ispyss";
+				titleList.add("ispyss"); 
 			} else if (value.equals("培养博士")) {
-				title[i] = "ispybs";
+				titleList.add("ispybs");
 			}
 		}
-		return title;
+		return titleList;
+	}
+
+	/**
+	 * 读取Excel表格表头的内容
+	 * 
+	 * @param InputStream
+	 * @return String 表头内容的数组
+	 * @author zengwendong
+	 */
+	public List<String> readExcelMajorTitle() throws Exception {
+		if (wb == null) {
+			throw new Exception("Workbook对象为空！");
+		}
+		sheet = wb.getSheetAt(0);
+		row = sheet.getRow(0);
+		// 标题总列数
+		int colNum = row.getPhysicalNumberOfCells();
+		System.out.println("colNum:" + colNum);
+		List<String> titleList = new ArrayList<>();
+		for (int i = 0; i < colNum; i++) {
+			String value = row.getCell(i).getStringCellValue();
+			if (value.equals("学历层次")) {
+				titleList.add("xldm");
+			} else if (value.equals("专业代码")) {
+				titleList.add("zydm");
+			} else if (value.equals("专业名称")) {
+				titleList.add("zymc");
+			}
+		}
+		return titleList;
 	}
 
 	/**
@@ -138,18 +169,18 @@ public class ReadExcelUtils<T> {
 	 * @return Map 包含单元格数据内容的Map对象
 	 * @author zengwendong
 	 */
-	public ArrayList<T> readExcelContent2() throws Exception {
+	public ArrayList<T> readUniversity() throws Exception {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
 
-		String[] excelTitle = readExcelTitle2();
+		List<String> univerTitle = readExcelUniverTitle();
 		ArrayList<T> list = new ArrayList<>();
 		sheet = wb.getSheetAt(0);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
 		row = sheet.getRow(0);
-		int colNum = row.getPhysicalNumberOfCells();
+		int colNum = univerTitle.size();
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		T student = null;
 		for (int i = 1; i <= rowNum; i++) {
@@ -159,7 +190,7 @@ public class ReadExcelUtils<T> {
 			Class clzz = student.getClass();
 			// 遍历列
 			while (j < colNum) {
-				String title = excelTitle[j];
+				String title = univerTitle.get(j);
 				Cell cell = row.getCell(j);
 				String value = cell.getStringCellValue();
 				Field field = clzz.getDeclaredField(title.toLowerCase());
@@ -188,17 +219,17 @@ public class ReadExcelUtils<T> {
 	 * @return Map 包含单元格数据内容的Map对象
 	 * @author zengwendong
 	 */
-	public ArrayList<T> readExcelContent() throws Exception {
+	public ArrayList<T> readExcelStudent() throws Exception {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
-		String[] excelTitle = readExcelTitle();
+		 List<String> studTitle = readExcelStudTitle();
 		ArrayList<T> list = new ArrayList<>();
 		sheet = wb.getSheetAt(0);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
 		row = sheet.getRow(0);
-		int colNum = row.getPhysicalNumberOfCells();
+		int colNum = studTitle.size();
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		T student = null;
 		System.out.println("rowNum:" + rowNum + ",colNum:" + colNum);
@@ -210,9 +241,61 @@ public class ReadExcelUtils<T> {
 			// 遍历列
 			int j = -1;
 			while ((++j) < colNum) {
-				String title = excelTitle[j];
+				String title = studTitle.get(j);
 				Cell cell = row.getCell(j);
 
+				if (cell == null) {
+					continue;
+				}
+				cell.setCellType(Cell.CELL_TYPE_STRING);
+				String value = cell.getStringCellValue();
+				try {
+					Field field = clzz.getDeclaredField(title.toLowerCase());
+					field.setAccessible(true);
+					field.set(student, value);
+				} catch (NoSuchFieldException e) {
+					System.out.println("NoSuchFieldException:,title:" + title);
+				}
+			}
+
+			if (student != null) {
+				list.add(student);
+			}
+		}
+		return list;
+	}
+
+	/**
+	 * 读取Excel数据内容
+	 * 
+	 * @param InputStream
+	 * @return Map 包含单元格数据内容的Map对象
+	 * @author zengwendong
+	 */
+	public ArrayList<T> readExcelMajor() throws Exception {
+		if (wb == null) {
+			throw new Exception("Workbook对象为空！");
+		}
+		List<String> majorTitle = readExcelMajorTitle();
+		ArrayList<T> list = new ArrayList<>();
+		sheet = wb.getSheetAt(0);
+		// 得到总行数
+		int rowNum = sheet.getLastRowNum();
+		row = sheet.getRow(0);
+		int colNum = majorTitle.size();
+		// 正文内容应该从第二行开始,第一行为表头的标题
+		T student = null;
+		System.out.println("rowNum:" + rowNum + ",colNum:" + colNum);
+		for (int i = 1; i <= rowNum; i++) {
+			row = sheet.getRow(i);
+			System.out.println("loop:rowNumber:" + i + ",totalrowNum:" + rowNum);
+			student = objClazz.newInstance();
+			Class clzz = student.getClass();
+			// 遍历列
+			int j = -1;
+			while ((++j) < colNum) {
+				String title = majorTitle.get(j);
+				Cell cell = row.getCell(j);
 				if (cell == null) {
 					continue;
 				}
