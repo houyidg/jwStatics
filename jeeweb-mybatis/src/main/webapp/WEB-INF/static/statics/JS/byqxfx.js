@@ -67,11 +67,6 @@ function parseParamsInitChose(idname,id, name, _self) {
 				+ "&typeid=" + CType
 				+ "&bysqx=" + CQx;
 		initChose("CName", newUrl, arg);
-	}if (idname == "CName") {
-		var CName = $("#CName .fixedId").val();
-		var newUrl = realBaseUrl + "/ajaxPropertyList";
-		var arg = "type=zy&yxdms=" + CName;
-		initChose("CZy", newUrl, arg);
 	}
 }
 function initChose(idname, url, param) {

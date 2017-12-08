@@ -3,7 +3,7 @@
  */
 var actiontype = "jyqsfx";
 $(function() {
-	//
+	
 	init();
 	// 点击选择确定
 	$("#sure").click(
@@ -17,8 +17,8 @@ $(function() {
 		var CName = $("#CName .fixedId").val();
 		var CQx = $("#CQx .fixedId").val();
 		var CZy = $("#CZy .fixedId").val();
-		var is985 = $("#is985").attr('checked')?true:'';
-		var is211 = $("#is211").attr('checked')?true:'';
+		var is985 = $("#is985").hasClass('checked')?true:'';
+		var is211 = $("#is211").hasClass('checked')?true:'';
 		// alert(CArea + "," + CFeature + "," + CBelongto + "," + CType+
 		// "," + CName+','+start_time);
 		var newUrl = realBaseUrl + "/ajaxChartList";
@@ -61,8 +61,8 @@ function loadCNameByOther(){
 	var CFeature = $("#CFeature .fixedId").val();
 	var CBelongto = $("#CBelongto .fixedId").val();
 	var CType = $("#CType .fixedId").val();
-	var is985 = $("#is985").attr('checked')?true:'';
-	var is211 = $("#is211").attr('checked')?true:'';
+	var is985 = $("#is985").hasClass('checked')?true:'';
+	var is211 = $("#is211").hasClass('checked')?true:'';
 	var newUrl = realBaseUrl + "/ajaxPropertyList";
 	var arg = "type=yxmc&areaid=" + CArea
 			+ "&featureid=" + CFeature
@@ -76,11 +76,6 @@ function loadCNameByOther(){
 function parseParamsInitChose(idname,id, name, _self) {
 	if (idname != "CName" && idname != "CZy") {
 		loadCNameByOther();
-	}if (idname == "CName") {
-		var CName = $("#CName .fixedId").val();
-		var newUrl = realBaseUrl + "/ajaxPropertyList";
-		var arg = "type=zy&yxdms=" + CName;
-		initChose("CZy", newUrl, arg);
 	}
 }
 function initChose(idname, url, param) {

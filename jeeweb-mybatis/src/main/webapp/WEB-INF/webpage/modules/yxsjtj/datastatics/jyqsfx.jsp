@@ -5,30 +5,12 @@
 <head>
 <title>数据统计</title>
 <meta name="decorator" content="list" />
+
 <html:css name="syntaxhighlighter" />
+
 <link href="${staticPath}/statics/script/common.css" rel="stylesheet">
 <link href="${staticPath}/statics/script/EmploymentTrengAnalysis.css"
 	rel="stylesheet">
-<style type="text/css">
-.oneBlock {
-	float: left;
-	width: 33%;
-	margin: 5px 0;
-}
-
-.nameLab1 {
-	font-size: 16px;
-	font-weight: bolder;
-}
-
-.checkbox1 {
-	margin: 2px;
-}
-
-.checkCon {
-	margin-right: 20px;
-}
-</style>
 <link href="${staticPath}/statics/script/UI/chosen.css" rel="stylesheet">
 <script type="application/javascript"
 	src="${staticPath}/statics/JS/UI/My97DatePicker/WdatePicker.js"></script>
@@ -39,6 +21,25 @@
 <script type="text/javascript">
 	var baseUrl = "${staticPath}/statics";
 	var realBaseUrl = "${adminPath}/yxsjtj/datastatics"
+	$(function() {
+		var is985 = false, is211 = false, a = 1, b = 1;
+		$('#is985Div').click(function() {
+			if($("#is985").hasClass('uncheck')){
+				$("#is985").removeClass('uncheck').addClass('checked');
+			}else{
+				$("#is985").removeClass('checked').addClass('uncheck');
+			}
+			loadCNameByOther();
+		});
+		$('#is211Div').click(function() {
+			if($("#is211").hasClass('uncheck')){
+				$("#is211").removeClass('uncheck').addClass('checked');
+			}else{
+				$("#is211").removeClass('checked').addClass('uncheck');
+			}
+			loadCNameByOther();
+		});
+	})
 </script>
 <!-- 全局js -->
 <html:js name="echarts" />
@@ -53,7 +54,7 @@
 			</div>
 			<div class="CHOSE">
 				<div class="oneBlock">
-					<div class="nameLab">就业 形势：</div>
+					<div class="nameLab">就业&nbsp;形势：</div>
 					<div class="chosedown" id="CQx"></div>
 				</div>
 				<div class="oneBlock">
@@ -62,68 +63,50 @@
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">院校 性质：</div>
+					<div class="nameLab">院校&nbsp;性质：</div>
 					<div class="chosedown" id="CFeature"></div>
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">隶属 单位：</div>
+					<div class="nameLab">隶属&nbsp;单位：</div>
 					<div class="chosedown" id="CBelongto"></div>
 				</div>
 
 				<div class="oneBlock">
-					<div class="nameLab">办学 类型：</div>
+					<div class="nameLab">办学&nbsp;类型：</div>
 					<div class="chosedown" id="CType"></div>
 				</div>
 				<div class="oneBlock">
-					<div class="nameLab">院 校：</div>
+					<div class="nameLab">院&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;校：</div>
 					<div class="chosedown" id="CName"></div>
 				</div>
 				<div class="oneBlock">
-					<div class="nameLab">专 业：</div>
+					<div class="nameLab">专&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;业：</div>
 					<div class="chosedown" id="CZy"></div>
 				</div>
 
 				<div class="oneBlock">
-					<span class="checkCon">
-						<input type="checkbox"
-						class="checkbox1" id="is985"/>
-						<span class="nameLab1">985</span>
-						</span>
-					<span class="checkCon">
-					<input type="checkbox"  data-type="checkbox" class="checkbox1" id="is211" /><span class="nameLab1">211</span></span>
+					<div id="is985Div" class="wrap92">
+						<span id="is985" class="uncheck boxed"></span>985
+					</div>
+					<div id="is211Div" class="wrap92">
+						<span id="is211" class="uncheck boxed"></span>211
+					</div>
 				</div>
 
 			</div>
 			<div class="sureCon">
-				<span id="sure" class="btnSure">确定</span><span id="reset"
+				<span id="sure" class="btnSure">确定</span> <span id="reset"
 					class="btnReset">重置</span>
 			</div>
 		</div>
 		<!--图形显示-->
 		<div class="picCon">
-			<div class="top_lab">
-				<ul id="tableChose1">
-					<!-- 	<!--<li class="nowPic">饼图</li>-->
-				</ul>
-			</div>
 			<div class="pic_con" id="tableShow">
 				<div class="Picshow" id="echarts-line-chart"></div>
 				<!--<div class="Picshow" id="bar" ></div>-->
 			</div>
 		</div>
 	</div>
-
-	<script type="text/javascript">
-		//checkbox
-		$("input[id='is985']").click(function() {
-			console.log("985");
-			loadCNameByOther();
-		});
-	    $('[data-type="checkbox"]').click(function() {
-			console.log("is211");
-			loadCNameByOther();
-		});
-	</script>
 </body>
 </html>

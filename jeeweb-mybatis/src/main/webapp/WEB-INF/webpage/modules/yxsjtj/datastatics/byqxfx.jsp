@@ -110,19 +110,12 @@
 				</div>
 			</div>
 			<div class="sureCon">
-				<span id="sure" class="btnSure">确定</span> <span id="reset"
-					class="btnReset">重置</span>
+				<span id="sure" class="btnSure">确定</span> 
+				<span id="reset" class="btnReset">重置</span>
 			</div>
 		</div>
 		<!--图形显示-->
 		<div class="picCon">
-			<div class="top_lab">
-				<ul id="tableChose1">
-					<!-- 	<!--<li class="nowPic">饼图</li>-->
-					-->
-
-				</ul>
-			</div>
 			<div class="pic_con" id="tableShow">
 				<div class="Picshow" id="echarts-pie-chart"></div>
 				<!--<div class="Picshow" id="bar" ></div>-->

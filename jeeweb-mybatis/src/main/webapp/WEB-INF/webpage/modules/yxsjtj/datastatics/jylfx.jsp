@@ -12,18 +12,6 @@
 <link href="${staticPath}/statics/script/UI/chosen.css" rel="stylesheet">
 <link href="${staticPath}/statics/script/UI/datagrid.css"
 	rel="stylesheet">
-<style type="text/css">
-.btnReset {
-	cursor: pointer;
-	padding: 5px 18px;
-	background: #d08e29;
-	color: #f4f4f4;
-	border-radius: 7px;
-	-moz-border-radius: 7px;
-	-webkit-border-radius: 7px;
-	-o-border-radius: 7px;
-}
-</style>
 
 <script type="application/javascript"
 	src="${staticPath}/statics/JS/UI/My97DatePicker/WdatePicker.js"></script>
@@ -394,18 +382,12 @@
 
 			</div>
 			<div class="sureCon">
-				<span id="sure" class="btnSure">确定</span><span id="reset"
-					class="btnReset">重置</span>
+				<span id="sure" class="btnSure">确定</span> 
+				<span id="reset" class="btnReset">重置</span>
 			</div>
 		</div>
 		<!--图形显示-->
 		<div class="picCon">
-			<div class="top_lab">
-				<ul id="tableChose1">
-					<!-- 	<!--<li class="nowPic">饼图</li>-->
-
-				</ul>
-			</div>
 			<div class="pic_con" id="tableShow">
 				<div class="Picshow" id="echarts-bar-chart"></div>
 			</div>
