@@ -34,10 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MajorServiceImpl  extends CommonServiceImpl<MajorMapper,Major> implements  IMajorService {
 	@Override
 	public boolean resolverAttch(HttpServletRequest request, MultipartFile file) throws Exception{
-		InputStream inputStream = file.getInputStream();
-		String filename = file.getOriginalFilename();
-		String fileext = StringUtils.getExtensionName(filename);
-		ArrayList<Major> arrayList = new ReadExcelUtils(inputStream, fileext,Major.class).readExcelMajor();
+		ArrayList<Major> arrayList = new ReadExcelUtils(file,Major.class).readExcelMajor();
 		for(Major major:arrayList) {
 			String xldm = DictUtils.getDictValue(major.getXldm().replaceAll("专业", ""), "xldm", "");
 			major.setXldm(xldm);

@@ -107,6 +107,8 @@
 				<!--<div class="Picshow" id="bar" ></div>-->
 			</div>
 		</div>
+		
+		<%@include file="../common/loading.jsp" %>
 	</div>
 </body>
 </html>

@@ -36,10 +36,7 @@ public class StudentServiceImpl extends CommonServiceImpl<StudentMapper, Student
 		boolean insertBatch = false;
 		InputStream inputStream = null;
 		try {
-			inputStream = file.getInputStream();
-			String filename = file.getOriginalFilename();
-			String fileext = StringUtils.getExtensionName(filename);
-			ReadExcelUtils readExcelUtils = new ReadExcelUtils(inputStream, fileext, Student.class);
+			ReadExcelUtils readExcelUtils = new ReadExcelUtils(file,Student.class);
 			if(readExcelUtils.wb!=null) {
 				ArrayList<Student> arrayList = readExcelUtils.readExcelStudent();
 				for (Student student : arrayList) {
@@ -60,7 +57,7 @@ public class StudentServiceImpl extends CommonServiceImpl<StudentMapper, Student
 				}
 				insertBatch = insertBatch(arrayList);
 			}
-			System.out.println("insertBatch:" + insertBatch);
+			System.out.println("insertBatch:" + insertBatch+",readExcelUtils.wb:"+readExcelUtils.wb);
 		} catch (Exception e) {
 			if (inputStream != null)
 				inputStream.close();
@@ -69,6 +66,9 @@ public class StudentServiceImpl extends CommonServiceImpl<StudentMapper, Student
 		return insertBatch;
 	}
 
+	
+	
+	
 	@Override
 	public List<Map<String, Object>> getStatics(Map<String, Object> data) {
 		List<Map<String, Object>> list = baseMapper.getStatics(data);

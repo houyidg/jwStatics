@@ -6,13 +6,6 @@
   <title>专业列表</title>
   <meta name="decorator" content="list"/>
   <html:component name="bootstrap-fileinput" />
-  <script>
-	  function refreshCallback(obj){
-		  reset('majorGridIdGrid');
-		  search('majorGridIdGrid');
-		  // var fileid= attachmentList[i].data.id;
-	  }
-	</script>
 </head>
 <body title="专业">
 <div style="margin-bottom: 20px">
@@ -35,5 +28,12 @@
 	<grid:toolbar function="search"/>
 	<grid:toolbar function="reset"/>
 </grid:grid>
+ <script>
+	function infoiduploadsuccess(event, data, previewId, index) {
+		  reset('majorGridIdGrid');
+		  search('majorGridIdGrid');
+		  alert("导入完成");
+	  }
+	</script>
 </body>
 </html>

@@ -9,15 +9,6 @@
 <html:component name="bootstrap-fileinput" />
 </head>
 <body title="院校管理">
-
-<script>
-	  function refreshCallback(obj){
-		  reset('universityGridIdGrid');
-		  search('universityGridIdGrid');
-		  // var fileid= attachmentList[i].data.id;
-	  }
-	</script>
-
 <div style="margin-bottom: 20px">
 		<form:fileinput nested="false" path="infoid" uploadSuccessCallback="refreshCallback"
 			buttonText="批量添加" multiple="false"
@@ -53,5 +44,13 @@
 	<grid:toolbar function="search"/>
 	<grid:toolbar function="reset"/>
 </grid:grid>
+<script>
+function infoiduploadsuccess(event, data, previewId, index) {
+		  console.log(data);
+		  reset('universityGridIdGrid');
+		  search('universityGridIdGrid');
+		  alert("导入完成");
+	  }
+	</script>
 </body>
 </html>

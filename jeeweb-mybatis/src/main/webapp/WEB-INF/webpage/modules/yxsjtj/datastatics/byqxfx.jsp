@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@include file="/WEB-INF/webpage/common/taglibs.jspf"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -110,8 +111,8 @@
 				</div>
 			</div>
 			<div class="sureCon">
-				<span id="sure" class="btnSure">确定</span> 
-				<span id="reset" class="btnReset">重置</span>
+				<span id="sure" class="btnSure">确定</span> <span id="reset"
+					class="btnReset">重置</span>
 			</div>
 		</div>
 		<!--图形显示-->
@@ -121,7 +122,7 @@
 				<!--<div class="Picshow" id="bar" ></div>-->
 			</div>
 		</div>
-
+		<%@include file="../common/loading.jsp" %>
 	</div>
 
 </body>

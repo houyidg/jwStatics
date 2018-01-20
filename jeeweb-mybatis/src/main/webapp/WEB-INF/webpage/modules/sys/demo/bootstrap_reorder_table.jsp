@@ -2,7 +2,6 @@
 <%@include file="/WEB-INF/webpage/common/taglibs.jspf"%>
 <!DOCTYPE html>
 <html>
-<!-- 例子 http://issues.wenzhixin.net.cn/bootstrap-table/index.html#options/table-style.html -->
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

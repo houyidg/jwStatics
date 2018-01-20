@@ -34,10 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UniversityServiceImpl  extends CommonServiceImpl<UniversityMapper,University> implements  IUniversityService {
 	@Override
 	public boolean resolverAttch(HttpServletRequest request, MultipartFile file) throws Exception {
-		InputStream inputStream = file.getInputStream();
-		String filename = file.getOriginalFilename();
-		String fileext = StringUtils.getExtensionName(filename);
-		ArrayList<University> arrayList = new ReadExcelUtils(inputStream, fileext,University.class).readUniversity();
+		ArrayList<University> arrayList = new ReadExcelUtils(file,University.class).readUniversity();
 		for(University university:arrayList) {
 			university.setAreaid(DictUtils.getDictValue(university.getAreaid(), "yxszd", ""));
 			

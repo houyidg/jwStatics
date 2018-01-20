@@ -1,52 +1,79 @@
 package cn.jeeweb.modules.yxsjtj.utils;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.PushbackInputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 读取Excel
  */
 public class ReadExcelUtils<T> {
 	private Logger logger = LoggerFactory.getLogger(ReadExcelUtils.class);
-	public Workbook wb = null;
-	private Sheet sheet;
-	private Row row;
+	public org.apache.poi.ss.usermodel.Workbook wb = null;
+	private org.apache.poi.ss.usermodel.Sheet sheet;
+	private org.apache.poi.ss.usermodel.Row row;
 	private Class<T> objClazz;
 
-	public ReadExcelUtils(InputStream in, String ext, Class clzz) {
+	@SuppressWarnings("unchecked")
+	public ReadExcelUtils(MultipartFile file, Class clzz) {
 		try {
 			objClazz = clzz;
-
-			if (!in.markSupported()) {
-				in = new PushbackInputStream(in, 8);
-			}
-			if (POIFSFileSystem.hasPOIFSHeader(in)) {
-				wb = new HSSFWorkbook(in);
-			}
-			if (POIXMLDocument.hasOOXMLHeader(in)) {
-				wb = new XSSFWorkbook(OPCPackage.open(in));
-			}
-
+			checkFile(file);
+			wb = getWorkBook(file);
+			System.out.println("ReadExcelUtils:wb---" + wb);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void checkFile(MultipartFile file) throws IOException {
+		// 判断文件是否存在
+		if (null == file) {
+			throw new FileNotFoundException("文件不存在！");
+		}
+		// 获得文件名
+		String fileName = file.getOriginalFilename();
+		// 判断文件是否是excel文件
+		if (!fileName.endsWith("xls") && !fileName.endsWith("xlsx")) {
+			throw new IOException(fileName + "不是excel文件");
+		}
+	}
+
+	public static Workbook getWorkBook(MultipartFile file) {
+		// 获得文件名
+		String fileName = file.getOriginalFilename();
+		// 创建Workbook工作薄对象，表示整个excel
+		Workbook workbook = null;
+		try {
+			// 获取excel文件的io流
+			InputStream is = file.getInputStream();
+			// 根据文件后缀名不同(xls和xlsx)获得不同的Workbook实现类对象
+			if (fileName.endsWith("xls")) {
+				// 2003
+				workbook = new HSSFWorkbook(is);
+			} else if (fileName.endsWith("xlsx")) {
+				// 2007
+				workbook = new XSSFWorkbook(is);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return workbook;
 	}
 
 	/**
@@ -67,7 +94,7 @@ public class ReadExcelUtils<T> {
 		System.out.println("colNum:" + colNum);
 		List<String> titleList = new ArrayList<>();
 		for (int i = 0; i < colNum; i++) {
-			titleList.add(row.getCell(i).getStringCellValue()) ;
+			titleList.add(row.getCell(i).getStringCellValue());
 		}
 		return titleList;
 	}
@@ -96,21 +123,21 @@ public class ReadExcelUtils<T> {
 			} else if (value.equals("院校名称")) {
 				titleList.add("name");
 			} else if (value.equals("所在地市州")) {
-				titleList.add("areaid"); 
+				titleList.add("areaid");
 			} else if (value.equals("所在地")) {
-				titleList.add("provinceid"); 
+				titleList.add("provinceid");
 			} else if (value.equals("院校性质")) {
-				titleList.add("featureid"); 
+				titleList.add("featureid");
 			} else if (value.equals("隶属单位")) {
-				titleList.add("belongto"); 
+				titleList.add("belongto");
 			} else if (value.equals("办学类型")) {
-				titleList.add("typeid"); 
+				titleList.add("typeid");
 			} else if (value.equals("is211")) {
 				titleList.add("is211");
 			} else if (value.equals("is985")) {
-				titleList.add("is985"); 
+				titleList.add("is985");
 			} else if (value.equals("独立学院")) {
-				titleList.add("isindependent"); 
+				titleList.add("isindependent");
 			} else if (value.equals("新增本科")) {
 				titleList.add("isnewbk");
 			} else if (value.equals("示范高职")) {
@@ -120,11 +147,11 @@ public class ReadExcelUtils<T> {
 			} else if (value.equals("民办院校")) {
 				titleList.add("ismbyx");
 			} else if (value.equals("培养专科")) {
-				titleList.add("ispyzk"); 
+				titleList.add("ispyzk");
 			} else if (value.equals("培养本科")) {
 				titleList.add("ispybk");
 			} else if (value.equals("培养硕士")) {
-				titleList.add("ispyss"); 
+				titleList.add("ispyss");
 			} else if (value.equals("培养博士")) {
 				titleList.add("ispybs");
 			}
@@ -223,7 +250,7 @@ public class ReadExcelUtils<T> {
 		if (wb == null) {
 			throw new Exception("Workbook对象为空！");
 		}
-		 List<String> studTitle = readExcelStudTitle();
+		List<String> studTitle = readExcelStudTitle();
 		ArrayList<T> list = new ArrayList<>();
 		sheet = wb.getSheetAt(0);
 		// 得到总行数
@@ -247,8 +274,15 @@ public class ReadExcelUtils<T> {
 				if (cell == null) {
 					continue;
 				}
-				cell.setCellType(Cell.CELL_TYPE_STRING);
-				String value = cell.getStringCellValue();
+				String value = null;
+				if(cell.getCellType() ==  Cell.CELL_TYPE_NUMERIC) {
+					value = ((int)cell.getNumericCellValue())+"";
+					System.out.println("value:"+value);
+				}else {
+					cell.setCellType(Cell.CELL_TYPE_STRING);
+					value = cell.getStringCellValue();
+				}
+				
 				try {
 					Field field = clzz.getDeclaredField(title.toLowerCase());
 					field.setAccessible(true);

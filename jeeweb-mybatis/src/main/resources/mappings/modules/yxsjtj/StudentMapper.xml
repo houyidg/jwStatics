@@ -103,7 +103,7 @@
 			</foreach>
 		</if>
 		<if test="zy!=null">
-			AND t.zydm=#{zy}
+			AND t.zydm=${zy}
 		</if>
 		)
 		GROUP BY t.byqxdm
@@ -173,7 +173,7 @@
 			</foreach>
 		</if>
 		<if test="zy!=null">
-			AND t.zydm=#{zy}
+			AND t.zydm=${zy}
 		</if>
 		)
 		GROUP BY t.byqxdm,t.yxdm
@@ -246,23 +246,20 @@
 
 		<if test="is985!=null and is211==null">
 			AND t.yxdm IN
-			(SELECT number FROM university WHERE
-			is985=true)
+			(SELECT number FROM university WHERE is985=true)
 		</if>
 		<if test="is211!=null and is985==null">
 			AND t.yxdm IN
-			(SELECT number FROM university WHERE
-			is211=true)
+			(SELECT number FROM university WHERE is211=true)
 		</if>
 
 		<if test="is211!=null and is985!=null">
 			AND t.yxdm IN
-			(SELECT number FROM university WHERE
-			is211=true AND is985=true)
+			(SELECT number FROM university WHERE is211=true AND is985=true)
 		</if>
 		
 		<if test="zy!=null">
-			AND t.zydm=#{zy}
+			AND t.zydm=${zy}
 		</if>
 		)
 		GROUP BY t.yxdm,t.bysj ORDER BY t.bysj

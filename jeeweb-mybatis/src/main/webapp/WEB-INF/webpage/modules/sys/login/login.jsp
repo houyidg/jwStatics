@@ -68,13 +68,7 @@
                             </div>
                         </div>
                         <div class="clearfix"></div>
-                        <!--<div class="forget-password">-->
-                        <!--<span>默认账号密码:<b>admin/123456</b></span><b>-->
-                        <!--</b></div>-->
                         <b>
-                            <hr>
-                            <!--<p>如果您没有帐号? <a id="btn-register" href="https://demo.jeeweb.cn/admin/login?logout=1#">请注册</a>-->
-                            <!--</p>-->
                         </b></div><b>
 
                     </b>

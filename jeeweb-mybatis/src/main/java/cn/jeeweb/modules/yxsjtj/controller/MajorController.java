@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import cn.jeeweb.modules.sys.entity.Attachment;
 import cn.jeeweb.modules.yxsjtj.entity.Major;
@@ -75,36 +76,31 @@ public class MajorController extends BaseBeanController<Major> {
   	 */
   	@RequestMapping(value = "uploadSimditor", method = RequestMethod.POST)
   	@ResponseBody
-  	public AjaxJson uploadSimditor(HttpServletRequest request, HttpServletResponse response) {
+  	public Callable<Boolean> uploadSimditor(final HttpServletRequest request, HttpServletResponse response) {
   		response.setContentType("text/plain");
-  		AjaxJson ajaxJson = new AjaxJson();
-  		List<Attachment> attachmentList = new ArrayList<Attachment>();
-  		
-  		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
-  				request.getSession().getServletContext());
-  		Map<String, Object> data = new HashMap<String, Object>();
-  		boolean isSuccess = false;
-  		if (multipartResolver.isMultipart(request)) { // 判断request是否有文件上传
-  			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-  			Iterator<String> ite = multiRequest.getFileNames();
-  			while (ite.hasNext()) {
-  				MultipartFile file = multiRequest.getFile(ite.next());
-  				try {
-  					isSuccess = majorService.resolverAttch(request, file);
-  				} catch (Exception e) {
-  					isSuccess = false;
-  					e.printStackTrace();
-  				}
-  				break;
-  			}
-  		} 
-  		Attachment attachment = new Attachment();
-  		attachment.setStatus(isSuccess+"");
-  		attachment.setId("id");
-  		attachmentList.add(attachment);
-  		ajaxJson.setData(attachmentList);
-  		System.out.println("uploadSimditor:"+isSuccess);
-  		return ajaxJson;
+  		Callable<Boolean> callback = new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+		  		boolean isSuccess = false;
+		  		if (multipartResolver.isMultipart(request)) { // 判断request是否有文件上传
+		  			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
+		  			Iterator<String> ite = multiRequest.getFileNames();
+		  			while (ite.hasNext()) {
+		  				MultipartFile file = multiRequest.getFile(ite.next());
+		  				try {
+		  					isSuccess = majorService.resolverAttch(request, file);
+		  				} catch (Exception e) {
+		  					isSuccess = false;
+		  					e.printStackTrace();
+		  				}
+		  				break;
+		  			}
+		  		} 
+				return isSuccess;
+			}
+		};
+		return callback;
   	}
       
 

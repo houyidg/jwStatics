@@ -167,7 +167,11 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 			String[] arr = parameterValue.split(arrConStr);
 			if(arr.length>0) {
 				entityWrapper.and();
-				entityWrapper.in(parameterKey, arr);
+				if("is211".equals(parameterKey) || "is985".equals(parameterKey)) {
+					entityWrapper.eq(parameterKey, arr[0]);
+				}else {
+					entityWrapper.in(parameterKey, arr);
+				}
 			}
 		}
 	}
@@ -218,10 +222,11 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 			/** 院校代码 院校名称 所在地 院校性质 隶属单位 办学类型 211 985 毕业时间 毕业人数
 			 */
 			for (Map<String, Object> map : dataList) {
+				System.out.println("ACTION_TYPE_JYLFX yxdm:"+map.get("yxdm").toString());
 				JylColumn column = new JylColumn(map.get("yxdm").toString());
 				int indexOf = jylColumns.indexOf(column);
 				if(indexOf==-1) {
-					generateJylColumn(jylColumns, column);
+					column = generateJylColumn(jylColumns, column);
 					jylColumn = column;
 				}else {
 					jylColumn = jylColumns.get(indexOf);
@@ -307,10 +312,13 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 			jyqsLines.add(jyqsLine);
 	}
 
-	private void generateJylColumn(List<JylColumn> jylColumns, JylColumn column) {
+	private JylColumn generateJylColumn(List<JylColumn> jylColumns, JylColumn column) {
 		EntityWrapper<University> wrapper = new EntityWrapper<>(University.class);
 		wrapper.eq("number", column.yxdm);
 		University university = universityService.selectOne(wrapper);
+		if(university==null) {
+			return null;
+		}
 		column.yxmc = university.getName();
 		column.yxszd = DictUtils.getDictLabel(university.getAreaid(), "yxszd", university.getAreaid());
 		column.yxxz = DictUtils.getDictLabel(university.getFeatureid(), "yxxz", university.getFeatureid());
@@ -319,6 +327,7 @@ public class DataStaticsController extends BaseBeanController<ChartModel> {
 		column.is211 = university.getIs211();
 		column.is985 = university.getIs985();
 		jylColumns.add(column);
+		return column;
 	}
 
 	private void setJylColumn(JylColumn jylColumnAll, long tempCount, String tempDm) {

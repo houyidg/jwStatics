@@ -5,9 +5,21 @@ var actiontype = "jyqsfx";
 $(function() {
 	
 	init();
+	
+	$("#reset").click(function() {
+		init();
+		if($("#is985").hasClass('checked')){
+			$("#is985").removeClass('checked').addClass('uncheck');
+		}
+		if($("#is211").hasClass('checked')){
+			$("#is211").removeClass('checked').addClass('uncheck');
+		}
+	});
+	
 	// 点击选择确定
 	$("#sure").click(
 	function() {
+		$("#l-wrapper").show();//显示div  
 		// <!--universityid featureid belongto startDate endDate typeid
 		// areaid byqxdms byqxdm -->
 		var CArea = $("#CArea .fixedId").val();
@@ -17,8 +29,8 @@ $(function() {
 		var CName = $("#CName .fixedId").val();
 		var CQx = $("#CQx .fixedId").val();
 		var CZy = $("#CZy .fixedId").val();
-		var is985 = $("#is985").hasClass('checked')?true:'';
-		var is211 = $("#is211").hasClass('checked')?true:'';
+		var is985 = $("#is985").hasClass('checked')?1:'';
+		var is211 = $("#is211").hasClass('checked')?1:'';
 		// alert(CArea + "," + CFeature + "," + CBelongto + "," + CType+
 		// "," + CName+','+start_time);
 		var newUrl = realBaseUrl + "/ajaxChartList";
@@ -33,6 +45,7 @@ $(function() {
 			dataType : 'json',
 			type : 'GET',
 			success : function(data) {
+				$("#l-wrapper").hide();//显示div  
 				console.log('ajax:', data);
 				generateChart(data);
 			}
@@ -61,8 +74,8 @@ function loadCNameByOther(){
 	var CFeature = $("#CFeature .fixedId").val();
 	var CBelongto = $("#CBelongto .fixedId").val();
 	var CType = $("#CType .fixedId").val();
-	var is985 = $("#is985").hasClass('checked')?true:'';
-	var is211 = $("#is211").hasClass('checked')?true:'';
+	var is985 = $("#is985").hasClass('checked')?1:'';
+	var is211 = $("#is211").hasClass('checked')?1:'';
 	var newUrl = realBaseUrl + "/ajaxPropertyList";
 	var arg = "type=yxmc&areaid=" + CArea
 			+ "&featureid=" + CFeature
@@ -159,7 +172,7 @@ function generateChart (data) {
 	series[index] = {name:element.yxmc, type:'line',data:[],itemStyle:{ normal: {label : {show: true}}}};
 	for(var dex=0,ilen = innerData.length;dex<ilen;dex++){
 		var iElement = innerData[dex];
-		if(!xData.hasOwnProperty(iElement.name)){
+		if($.inArray(iElement.name, xData)==-1){
 			xData[bysjIndx++] = iElement.name;
 		}
 		series[index].data[dex] = iElement.value;

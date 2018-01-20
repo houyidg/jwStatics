@@ -9,6 +9,7 @@ $(function() {
 	// 点击选择确定
 	$("#sure").click(
 			function() {
+				$("#l-wrapper").show();//显示div  
 				// <!--universityid featureid belongto startDate endDate typeid
 				// areaid byqxdms byqxdm -->
 				var start_time = $("#startTime").val();
@@ -35,6 +36,7 @@ $(function() {
 					type : 'GET',
 					success : function(data) {
 						console.log('newUrl ajaxChartList:', data);
+						 $("#l-wrapper").hide();//隐藏div  
 						generateChart(data);
 					}
 				});

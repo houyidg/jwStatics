@@ -54,7 +54,7 @@
 		var type = 'bar';
 		var isContainAll = false;
 		var series = [];
-		var legend=[];
+		var legend = [];
 		var tableData = {};
 		var index = 0;
 		var size = data.length;
@@ -65,7 +65,13 @@
 			series[index].type = type;
 			series[index].data = [ data[index].jyrs, data[index].djyrs,
 					data[index].bjynsxrs + data[index].qtzbjyrs ];
-			series[index].itemStyle = { normal: {label : {show: true}}};
+			series[index].itemStyle = {
+				normal : {
+					label : {
+						show : true
+					}
+				}
+			};
 			legend[index] = series[index].name;
 			index++;
 			isContainAll = true;
@@ -80,14 +86,20 @@
 		var tabIndex = 0;
 		if (size > 0) {
 			for (; index < size; index++) {
-				var element = data[index];
 				//组装图表数据
 				if (!isContainAll) {
 					series[index] = {};
 					series[index].name = data[index].yxmc + name;
 					series[index].type = type;
-					series[index].data = [ data[index].jyrs, data[index].djyrs,data[index].bjynsxrs + data[index].qtzbjyrs ];
-					series[index].itemStyle = { normal: {label : {show: true}}};
+					series[index].data = [ data[index].jyrs, data[index].djyrs,
+							data[index].bjynsxrs + data[index].qtzbjyrs ];
+					series[index].itemStyle = {
+						normal : {
+							label : {
+								show : true
+							}
+						}
+					};
 					legend[index] = series[index].name;
 				}
 				//组装表格数据
@@ -121,28 +133,29 @@
 				tab.upUnit = data[index].yxlsdw;
 
 				tab.eduType = data[index].yxbxlx;
-				tab.is211 = data[index].is211 == 1 ? true
-						: false;
-				tab.is985 = data[index].is985 == 1 ? true
-						: false;
+				tab.is211 = data[index].is211 == 1 ? '是' : '否';
+				tab.is985 = data[index].is985 == 1 ? '是' : '否';
 
-				tab.graduateTime = start_time + "-"
-						+ end_time;
+				tab.graduateTime = start_time + "-" + end_time;
 				tab.graduateNum = data[index].count;
-				tab.employRate = (data[index].jyrs * 1.0 / data[index].count).toFixed(4);
-				tab.waitEmployRate = (data[index].djyrs * 1.0
-						/ data[index].count).toFixed(4);
-				tab.noEmployRate = ((data[index].bjynsxrs + data[index].qtzbjyrs)
-						* 1.0 / data[index].count).toFixed(4);
+				tab.employRate = tab.graduateNum < 1 ? '0'
+						: (data[index].jyrs * 1.0 / data[index].count)
+								.toFixed(4);
+				tab.waitEmployRate = tab.graduateNum < 1 ? '0'
+						: (data[index].djyrs * 1.0 / data[index].count)
+								.toFixed(4);
+				tab.noEmployRate = tab.graduateNum < 1 ? '0'
+						: ((data[index].bjynsxrs + data[index].qtzbjyrs) * 1.0 / data[index].count)
+								.toFixed(4);
 			}
 		}
 		console.log("series:", series)
 		console.log("tableData:", tableData)
-		chart(series, xData,legend);
+		chart(series, xData, legend);
 		dataGrid(tableData);
 	}
 
-	function chart(series, xData,legend) {
+	function chart(series, xData, legend) {
 		var barChart = echarts.init(document
 				.getElementById("echarts-bar-chart"));
 		var baroption = {
@@ -151,7 +164,7 @@
 			},
 			tooltip : {
 				trigger : 'item',
-				show: true
+				show : true
 			},
 			legend : {
 				data : legend
@@ -176,12 +189,17 @@
 	}
 
 	function dataGrid(tableData) {
-		$('#datagrid').Datagrid(
+		$('#datagrid')
+				.Datagrid(
 						{
-							pagination:false,
-							staticData: tableData,
-							heightAdjust : true,
-							hasFirstCol : true,
+							staticData : tableData,
+							fit : true,
+							fitColumns : true,
+							rownumbers : true,
+							pagination : true,
+							singleSelect : true,
+							border : false,
+							striped : true,
 							sortRule : 'desc',
 							sortOrderBy : 'schoolID',
 							columns : [
@@ -271,7 +289,7 @@
 									{
 										field : 'graduateTime',
 										title : '毕业时间',
-										width : 80,
+										width : 120,
 										align : 'center',
 										formatter : function(row) {
 											return '<span class="graduateTime" val="'+ row.graduateTime+'">'
@@ -329,6 +347,9 @@
 
 							]
 						});
+
+		$('#datagrid').Datagrid('loadData', tableData);
+
 	}
 </script>
 <!-- 全局js -->
@@ -382,8 +403,8 @@
 
 			</div>
 			<div class="sureCon">
-				<span id="sure" class="btnSure">确定</span> 
-				<span id="reset" class="btnReset">重置</span>
+				<span id="sure" class="btnSure">确定</span> <span id="reset"
+					class="btnReset">重置</span>
 			</div>
 		</div>
 		<!--图形显示-->
@@ -392,7 +413,7 @@
 				<div class="Picshow" id="echarts-bar-chart"></div>
 			</div>
 		</div>
-
+		<%@include file="../common/loading.jsp" %>
 		<div id="datagrid" style="margin: 0 auto"></div>
 	</div>
 </body>

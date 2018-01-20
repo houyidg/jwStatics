@@ -10,6 +10,7 @@ $(function() {
 	// 点击选择确定
 	$("#sure").click(
 			function() {
+				$("#l-wrapper").show();//显示div  
 				// <!--universityid featureid belongto startDate endDate typeid
 				// areaid byqxdms byqxdm -->
 				start_time = $("#startTime").val();
@@ -35,11 +36,11 @@ $(function() {
 					dataType : 'json',
 					type : 'GET',
 					success : function(data) {
+						$("#l-wrapper").hide();//显示div  
 						console.log('newUrl ajaxChartList:', data);
 						generateChart(data);
 					}
 				});
-
 			});
 });
 // 初始化

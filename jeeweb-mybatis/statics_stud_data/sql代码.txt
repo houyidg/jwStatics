@@ -1,0 +1,19 @@
+select * from stu_2016 into outfile 'E:/stu_2016.xlsx'
+
+select YXDM,SFZH,XM,XLDM,ZYDM,ZY,BYSJ,BYQXDM  from s2014  into outfile 'E:/mysqldd/s2014.xlsx'
+select YXDM,SFZH,XM,XLDM,ZYDM,ZY,BYSJ,BYQXDM  from s2015  into outfile 'E:/mysqldd/s2015.xlsx'
+select YXDM,SFZH,XM,XLDM,ZYDM,ZY,BYSJ,BYQXDM  from s2016  into outfile 'E:/mysqldd/s2016.xlsx'
+
+UPDATE sData SET xldm=4 WHERE xldm=01 OR xldm=03;
+UPDATE sData SET xldm=3 WHERE xldm=13 OR xldm=11;
+UPDATE sData SET xldm=2 WHERE xldm=25 OR xldm=26;
+UPDATE sData SET xldm=1 WHERE xldm=41 OR xldm=43;
+
+insert ignore into s2014_copy
+SELECT  *  FROM s2015;
+
+
+2014 366023
+
+
+alter table student add id  int not null primary key Auto_increment; 

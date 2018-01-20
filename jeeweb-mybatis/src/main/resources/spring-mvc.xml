@@ -53,7 +53,7 @@
 	<!-- 开启注解方案2 -->
 	<mvc:annotation-driven>
 		<!-- 可不设置，使用异步线程默认的超时时间 -->
-		<mvc:async-support default-timeout="300000" />
+		<mvc:async-support default-timeout="3000000" />
 		<mvc:argument-resolvers>
 			<bean class="cn.jeeweb.core.query.resolver.QueryMethodArgumentResolver" />
 			<bean class="cn.jeeweb.core.query.resolver.PageableMethodArgumentResolver" />
@@ -201,10 +201,10 @@
 	</bean>
 
 	<!-- 支持上传文件 -->
-	<!-- 配置MultipartResolver 用于文件上传 使用spring的CommosMultipartResolver -->
+	<!-- 配置MultipartResolver 用于文件上传 使用spring的CommosMultipartResolver  200 * 1000*1000 byte   -->
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
-		p:defaultEncoding="UTF-8" p:maxUploadSize="55400000" p:uploadTempDir="${upload.base.dir}/temp" />
+		p:defaultEncoding="UTF-8" p:maxUploadSize="200000000" p:uploadTempDir="${upload.base.dir}/temp" />
 
 	<!-- 以下 validator http://blog.csdn.net/xiaojiesu/article/details/50555714 
 		在使用 mvc:annotation-driven 会 自动注册 -->
